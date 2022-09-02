@@ -1,19 +1,12 @@
 <template>
   <div>
-    后台首页{{ count }} <el-button @click="addCount">{{ count }}</el-button>
+    后台首页
+    <el-button>se'h</el-button>
   </div>
 </template>
 
 <script setup>
-import { reactive, ref } from "@vue/reactivity";
-
-let count = ref(1);
-function addCount() {
-  console.log("addCount");
-  count.value++;
-}
-
-const form = reactive({
-  num: 2,
-});
+import { useCookies } from "@vueuse/integrations/useCookies";
+const cookie = useCookies();
+console.log(cookie);
 </script>

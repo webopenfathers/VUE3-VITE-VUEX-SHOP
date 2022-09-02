@@ -57,8 +57,15 @@
 
 <script  setup>
 import { reactive, ref } from "vue";
+import { login } from "@/api/manager.js";
+import { ElNotification } from "element-plus";
+import { useRouter } from "vue-router";
+import { useCookies } from "@vueuse/integrations/useCookies";
 
 // do not use same name with ref
+
+const router = useRouter();
+
 const form = reactive({
   username: "",
   password: "",
@@ -78,6 +85,29 @@ const onSubmit = () => {
     }
 
     console.log("验证通过");
+    login(form.username, form.password)
+      .then((res) => {
+        console.log(res);
+        // 提示成功
+        ElNotification({
+          message: "登陆成功",
+          type: "success",
+          duration: 1000,
+        });
+        // 存储token和用户相关信息
+        const cookie = useCookies();
+        cookie.set("admin-token", res.data.data.token);
+
+        // 跳转后台首页
+        router.push("/");
+      })
+      .catch((err) => {
+        ElNotification({
+          message: err.response.data.msg || "请求失败",
+          type: "error",
+          duration: 3000,
+        });
+      });
   });
 };
 </script>
