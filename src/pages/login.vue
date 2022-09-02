@@ -61,7 +61,8 @@ import { reactive, ref } from "vue";
 import { login, getInfo } from "@/api/manager.js";
 import { ElNotification } from "element-plus";
 import { useRouter } from "vue-router";
-import { useCookies } from "@vueuse/integrations/useCookies";
+import { setToken } from "@/utils/auth.js";
+import { toast } from "@/utils/util.js";
 
 // do not use same name with ref
 
@@ -91,14 +92,9 @@ const onSubmit = () => {
       .then((res) => {
         console.log(res);
         // 提示成功
-        ElNotification({
-          message: "登陆成功",
-          type: "success",
-          duration: 1000,
-        });
+        toast("登陆成功");
         // 存储token
-        const cookie = useCookies();
-        cookie.set("admin-token", res.token);
+        setToken(res.token);
         // 获取用户相关信息
         getInfo().then((res) => {
           console.log(res);
