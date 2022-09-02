@@ -22,6 +22,7 @@ app.use(ElementPlus)
 
 import 'virtual:windi.css'
 
+import 'nprogress/nprogress.css'
 
 import './permission'
 

@@ -1,11 +1,14 @@
 import router from '@/router';
 
 import { getToken } from '@/utils/auth.js'
-import { toast } from '@/utils/util.js'
+import { toast, showFullLoading, hideFullLoading } from '@/utils/util.js'
 import store from './store';
 
 // 全局前置守卫
 router.beforeEach(async (to, from, next) => {
+    // 显示顶部加载进度条
+    showFullLoading()
+
     const token = getToken()
     // 没有登录强制跳转登录页
     if (!token && to.path !== '/login') {
@@ -27,4 +30,11 @@ router.beforeEach(async (to, from, next) => {
     }
 
     next()
+})
+
+
+// 全局后置守卫
+router.afterEach((to, from) => {
+    // 关闭顶部加载进度条
+    hideFullLoading()
 })
