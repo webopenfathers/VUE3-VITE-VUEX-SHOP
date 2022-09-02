@@ -59,14 +59,15 @@
 <script  setup>
 import { reactive, ref } from "vue";
 import { login, getInfo } from "@/api/manager.js";
-import { ElNotification } from "element-plus";
 import { useRouter } from "vue-router";
 import { setToken } from "@/utils/auth.js";
 import { toast } from "@/utils/util.js";
+import { useStore } from "vuex";
 
 // do not use same name with ref
 
 const router = useRouter();
+const store = useStore();
 
 const form = reactive({
   username: "",
@@ -98,6 +99,7 @@ const onSubmit = () => {
         // 获取用户相关信息
         getInfo().then((res) => {
           console.log(res);
+          store.commit("SET_USERINFO", res);
         });
         // 跳转后台首页
         router.push("/");
