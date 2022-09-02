@@ -29,6 +29,10 @@ router.beforeEach(async (to, from, next) => {
         await store.dispatch('getInfo')
     }
 
+    // 设置页面标题
+    let title = (to.meta.title ? to.meta.title : '') + '-vue3+vite后台'
+    document.title = title
+
     next()
 })
 
