@@ -15,8 +15,8 @@
         <span class="line"></span>
       </div>
       <!-- 表单 -->
-      <el-form :model="form" class="w-[250px]">
-        <el-form-item>
+      <el-form ref="formRef" :rules="rules" :model="form" class="w-[250px]">
+        <el-form-item prop="username">
           <el-input
             :prefix-icon="User"
             v-model="form.username"
@@ -27,10 +27,12 @@
             </template>
           </el-input>
         </el-form-item>
-        <el-form-item>
+        <el-form-item prop="password">
           <el-input
             :prefix-icon="Lock"
             v-model="form.password"
+            type="password"
+            show-password
             placeholder="请输入密码"
           >
             <template #prefix>
@@ -54,7 +56,7 @@
 </template>
 
 <script  setup>
-import { reactive } from "vue";
+import { reactive, ref } from "vue";
 
 // do not use same name with ref
 const form = reactive({
@@ -62,8 +64,21 @@ const form = reactive({
   password: "",
 });
 
+const rules = {
+  username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+  password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
+};
+
+const formRef = ref(null);
+
 const onSubmit = () => {
-  console.log(form);
+  formRef.value.validate((valid) => {
+    if (!valid) {
+      return false;
+    }
+
+    console.log("验证通过");
+  });
 };
 </script>
 <style scoped>
