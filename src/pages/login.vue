@@ -57,10 +57,8 @@
 </template>
 
 <script  setup>
-import { reactive, ref } from "vue";
-import { login, getInfo } from "@/api/manager.js";
+import { onBeforeUnmount, onMounted, reactive, ref } from "vue";
 import { useRouter } from "vue-router";
-import { setToken } from "@/utils/auth.js";
 import { toast } from "@/utils/util.js";
 import { useStore } from "vuex";
 
@@ -89,18 +87,12 @@ const onSubmit = () => {
     }
     loading.value = true;
     console.log("验证通过");
-    login(form.username, form.password)
+
+    store
+      .dispatch("login", form)
       .then((res) => {
-        console.log(res);
         // 提示成功
         toast("登陆成功");
-        // 存储token
-        setToken(res.token);
-        // 获取用户相关信息
-        getInfo().then((res) => {
-          console.log(res);
-          store.commit("SET_USERINFO", res);
-        });
         // 跳转后台首页
         router.push("/");
       })
@@ -109,6 +101,21 @@ const onSubmit = () => {
       });
   });
 };
+
+// 监听回车事件
+function onKeyUp(e) {
+  if (e.key === "Enter") onSubmit();
+}
+
+// 添加键盘监听
+onMounted(() => {
+  document.addEventListener("keyup", onKeyUp);
+});
+
+// 移除键盘监听
+onBeforeUnmount(() => {
+  document.removeEventListener("keyup", onKeyUp);
+});
 </script>
 <style scoped>
 .login-container {
