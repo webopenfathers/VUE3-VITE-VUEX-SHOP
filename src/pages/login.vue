@@ -25,10 +25,25 @@
       <!-- 表单 -->
       <el-form :model="form" class="w-[250px]">
         <el-form-item>
-          <el-input v-model="form.username" placeholder="请输入用户名" />
+          <el-input
+            :prefix-icon="User"
+            v-model="form.username"
+            placeholder="请输入用户名"
+          >
+            <template #prefix>
+              <el-icon><user /></el-icon>
+            </template>
+          </el-input>
         </el-form-item>
         <el-form-item>
-          <el-input v-model="form.password" placeholder="请输入密码" />
+          <el-input
+            :prefix-icon="Lock"
+            v-model="form.password"
+            placeholder="请输入密码"
+          >
+            <template #prefix>
+              <el-icon><lock /></el-icon> </template
+          ></el-input>
         </el-form-item>
 
         <el-form-item>
