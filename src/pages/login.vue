@@ -47,6 +47,7 @@
             class="w-[250px]"
             type="primary"
             @click="onSubmit"
+            :loading="loading"
             >登 录</el-button
           >
         </el-form-item>
@@ -57,7 +58,7 @@
 
 <script  setup>
 import { reactive, ref } from "vue";
-import { login } from "@/api/manager.js";
+import { login, getInfo } from "@/api/manager.js";
 import { ElNotification } from "element-plus";
 import { useRouter } from "vue-router";
 import { useCookies } from "@vueuse/integrations/useCookies";
@@ -77,13 +78,14 @@ const rules = {
 };
 
 const formRef = ref(null);
+const loading = ref(false);
 
 const onSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) {
       return false;
     }
-
+    loading.value = true;
     console.log("验证通过");
     login(form.username, form.password)
       .then((res) => {
@@ -94,19 +96,18 @@ const onSubmit = () => {
           type: "success",
           duration: 1000,
         });
-        // 存储token和用户相关信息
+        // 存储token
         const cookie = useCookies();
-        cookie.set("admin-token", res.data.data.token);
-
+        cookie.set("admin-token", res.token);
+        // 获取用户相关信息
+        getInfo().then((res) => {
+          console.log(res);
+        });
         // 跳转后台首页
         router.push("/");
       })
-      .catch((err) => {
-        ElNotification({
-          message: err.response.data.msg || "请求失败",
-          type: "error",
-          duration: 3000,
-        });
+      .finally(() => {
+        loading.value = false;
       });
   });
 };
