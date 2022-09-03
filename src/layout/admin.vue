@@ -1,0 +1,26 @@
+<template>
+  <el-container>
+    <el-header>
+      <!-- 头部 -->
+      <f-header></f-header>
+    </el-header>
+    <!--  下面-->
+    <el-container>
+      <!-- 侧边 -->
+      <el-aside>
+        <f-menu></f-menu>
+      </el-aside>
+      <!-- 主容器 -->
+      <el-main>
+        <f-tag-list></f-tag-list>
+        <!-- 主内容 -->
+        <router-view />
+      </el-main>
+    </el-container>
+  </el-container>
+</template>
+<script setup>
+import FHeader from "./components/FHeader.vue";
+import FMenu from "./components/FMenu.vue";
+import FTagList from "./components/FTagList.vue";
+</script>
