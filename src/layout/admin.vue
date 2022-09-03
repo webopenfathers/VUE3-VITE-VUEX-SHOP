@@ -7,7 +7,7 @@
     <!--  下面-->
     <el-container>
       <!-- 侧边 -->
-      <el-aside>
+      <el-aside :width="$store.state.asideWidth">
         <f-menu></f-menu>
       </el-aside>
       <!-- 主容器 -->
@@ -24,3 +24,8 @@ import FHeader from "./components/FHeader.vue";
 import FMenu from "./components/FMenu.vue";
 import FTagList from "./components/FTagList.vue";
 </script>
+<style scoped>
+.el-aside {
+  transition: all 0.2s;
+}
+</style>
