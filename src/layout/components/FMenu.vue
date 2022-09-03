@@ -53,24 +53,8 @@ const defaultActive = ref(route.path);
 
 // 是否折叠
 const isCollapse = computed(() => store.state.asideWidth == "64px");
-const asideMenus = [
-  {
-    name: "后台面板",
-    icon: "help",
-    child: [{ name: "主控台", frontpath: "/", icon: "home-filled" }],
-  },
-  {
-    name: "商城管理",
-    icon: "shopping-bag",
-    child: [
-      {
-        name: "商品管理",
-        frontpath: "/goods/list",
-        icon: "shopping-cart-full",
-      },
-    ],
-  },
-];
+// 获取vuex中的菜单
+const asideMenus = computed(() => store.state.menus);
 const router = useRouter();
 const handleSelect = (path) => {
   router.push(path);
@@ -85,5 +69,9 @@ const handleSelect = (path) => {
   overflow-y: auto;
   overflow-x: hidden;
   @apply shadow-md fixed bg-light-50;
+}
+
+.f-menu::-webkit-scrollbar {
+  width: 0px;
 }
 </style>
