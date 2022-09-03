@@ -3,7 +3,7 @@
     <el-menu
       unique-opened
       :collapse="isCollapse"
-      default-active="2"
+      :default-active="defaultActive"
       :collapse-transition="false"
       class="border-0"
       @select="handleSelect"
@@ -41,12 +41,17 @@
   </div>
 </template>
 <script setup>
-import { computed } from "vue";
-import { useRouter } from "vue-router";
+import { computed, ref } from "vue";
+import { useRouter, useRoute } from "vue-router";
 import { useStore } from "vuex";
 
-// 是否折叠
 const store = useStore();
+const route = useRoute();
+
+// 获取当前路径-默认选中
+const defaultActive = ref(route.path);
+
+// 是否折叠
 const isCollapse = computed(() => store.state.asideWidth == "64px");
 const asideMenus = [
   {
