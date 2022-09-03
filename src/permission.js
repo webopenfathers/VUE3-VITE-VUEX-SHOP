@@ -1,4 +1,4 @@
-import router from '@/router';
+import { router, addRoutes } from '@/router';
 
 import { getToken } from '@/utils/auth.js'
 import { toast, showFullLoading, hideFullLoading } from '@/utils/util.js'
@@ -25,15 +25,18 @@ router.beforeEach(async (to, from, next) => {
     }
 
     // 如果用户登录了，自动获取用户信息，并存储在vuex中
+    let hasNewRoutes = false
     if (token) {
-        await store.dispatch('getInfo')
+        let { menus } = await store.dispatch('getInfo')
+        // 动态添加路由
+        hasNewRoutes = addRoutes(menus)
     }
 
     // 设置页面标题
     let title = (to.meta.title ? to.meta.title : '') + '-vue3+vite后台'
     document.title = title
 
-    next()
+    hasNewRoutes ? next(to.fullPath) : next()
 })
 
 
