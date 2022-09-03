@@ -32,14 +32,12 @@
       </el-dropdown>
     </div>
   </div>
-
-  <el-drawer
-    :close-on-click-modal="false"
-    v-model="showDrawer"
+  <form-drawer
+    ref="formDrawerRef"
     title="修改密码"
-    size="45%"
+    destroyOnClose
+    @submit="onSubmit"
   >
-    <!-- 表单 -->
     <el-form
       ref="formRef"
       :rules="rules"
@@ -75,16 +73,11 @@
         >
         </el-input>
       </el-form-item>
-
-      <el-form-item>
-        <el-button type="primary" @click="onSubmit" :loading="loading"
-          >提交</el-button
-        >
-      </el-form-item>
     </el-form>
-  </el-drawer>
+  </form-drawer>
 </template>
 <script setup>
+import FormDrawer from "@/components/FormDrawer.vue";
 import { ref, reactive } from "vue";
 import { showModal, toast } from "@/utils/util.js";
 import { logout, updatePassword } from "@/api/manager.js";
@@ -102,7 +95,7 @@ const router = useRouter();
 const store = useStore();
 
 // 修改密码
-const showDrawer = ref(false);
+const formDrawerRef = ref(null);
 const form = reactive({
   oldpassword: "",
   password: "",
@@ -118,13 +111,13 @@ const rules = {
 };
 
 const formRef = ref(null);
-const loading = ref(false);
 const onSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) {
       return false;
     }
-    loading.value = true;
+    // 调用子组件的方法
+    formDrawerRef.value.showLoading();
     updatePassword(form)
       .then((res) => {
         toast("修改密码成功,请重新登录");
@@ -133,7 +126,8 @@ const onSubmit = () => {
         router.push("/login");
       })
       .finally(() => {
-        loading.value = false;
+        // 调用子组件的方法
+        formDrawerRef.value.hideLoading();
       });
   });
 };
@@ -144,7 +138,7 @@ const handleCommand = (c) => {
       handleLogout();
       break;
     case "rePassword":
-      showDrawer.value = true;
+      formDrawerRef.value.open();
       break;
   }
 };
