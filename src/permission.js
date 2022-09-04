@@ -5,6 +5,7 @@ import { toast, showFullLoading, hideFullLoading } from '@/utils/util.js'
 import store from './store';
 
 // 全局前置守卫
+let hasGetInfo = false
 router.beforeEach(async (to, from, next) => {
     // 显示顶部加载进度条
     showFullLoading()
@@ -26,8 +27,9 @@ router.beforeEach(async (to, from, next) => {
 
     // 如果用户登录了，自动获取用户信息，并存储在vuex中
     let hasNewRoutes = false
-    if (token) {
+    if (token && !hasGetInfo) {
         let { menus } = await store.dispatch('getInfo')
+        hasGetInfo = true
         // 动态添加路由
         hasNewRoutes = addRoutes(menus)
     }
