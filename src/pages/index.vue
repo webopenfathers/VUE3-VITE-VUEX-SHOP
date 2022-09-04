@@ -51,11 +51,13 @@
         </el-card>
       </el-col>
     </el-row>
+    <index-navs></index-navs>
   </div>
 </template>
 
 <script setup>
 import CountTo from "@/components/CountTo.vue";
+import IndexNavs from "@/components/IndexNavs.vue";
 import { getStatistics1 } from "@/api/index";
 import { ref } from "vue";
 
