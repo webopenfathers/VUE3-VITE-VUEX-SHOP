@@ -14,7 +14,12 @@
       <el-main>
         <f-tag-list></f-tag-list>
         <!-- 主内容 -->
-        <router-view />
+        <router-view v-slot="{ Component }">
+          <!-- keep-alive页面缓存 -->
+          <keep-alive :max="10">
+            <component :is="Component"></component>
+          </keep-alive>
+        </router-view>
       </el-main>
     </el-container>
   </el-container>
