@@ -87,7 +87,24 @@ const changeTab = (path) => {
   router.push(path);
 };
 
-const removeTab = (targetName) => {};
+// 关闭当前标签页的处理
+const removeTab = (t) => {
+  let a = activeTab.value;
+  let tabs = tabList.value;
+  if (a === t) {
+    tabs.forEach((tab, index) => {
+      if (tab.path == t) {
+        const nextTab = tabs[index + 1] || tabs[index - 1];
+        if (nextTab) {
+          a = nextTab.path;
+        }
+      }
+    });
+  }
+  activeTab.value = a;
+  tabList.value = tabList.value.filter((tab) => tab.path != t);
+  cookie.set("tabList", tabList.value);
+};
 </script>
 <style scoped>
 .f-tag-list {
