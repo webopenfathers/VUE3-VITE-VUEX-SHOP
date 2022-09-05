@@ -56,7 +56,19 @@
       <el-col :span="12" :offset="0">
         <index-chart></index-chart>
       </el-col>
-      <el-col :span="12" :offset="0"></el-col>
+      <el-col :span="12" :offset="0">
+        <index-card
+          title="店铺及商品提示"
+          tip="店铺及商品提示"
+          :btns="goods"
+          class="mb-4"
+        ></index-card>
+        <index-card
+          title="交易提示"
+          tip="需要立即处理的交易订单"
+          :btns="order"
+        ></index-card>
+      </el-col>
     </el-row>
   </div>
 </template>
@@ -65,12 +77,18 @@
 import CountTo from "@/components/CountTo.vue";
 import IndexNavs from "@/components/IndexNavs.vue";
 import IndexChart from "@/components/IndexChart.vue";
-import { getStatistics1 } from "@/api/index";
+import IndexCard from "@/components/IndexCard.vue";
+import { getStatistics1, getStatistics2 } from "@/api/index";
 import { ref } from "vue";
 
 const panels = ref([]);
 getStatistics1().then((res) => {
   panels.value = res.panels;
-  console.log(panels.value);
+});
+const goods = ref([]);
+const order = ref([]);
+getStatistics2().then((res) => {
+  goods.value = res.goods;
+  order.value = res.order;
 });
 </script>
