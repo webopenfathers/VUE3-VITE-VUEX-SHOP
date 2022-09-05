@@ -52,12 +52,19 @@
       </el-col>
     </el-row>
     <index-navs></index-navs>
+    <el-row :gutter="20" class="mt-5">
+      <el-col :span="12" :offset="0">
+        <index-chart></index-chart>
+      </el-col>
+      <el-col :span="12" :offset="0"></el-col>
+    </el-row>
   </div>
 </template>
 
 <script setup>
 import CountTo from "@/components/CountTo.vue";
 import IndexNavs from "@/components/IndexNavs.vue";
+import IndexChart from "@/components/IndexChart.vue";
 import { getStatistics1 } from "@/api/index";
 import { ref } from "vue";
 
