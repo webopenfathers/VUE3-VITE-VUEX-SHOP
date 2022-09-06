@@ -6,6 +6,7 @@
         :active="activeId === item.id"
         v-for="(item, index) in list"
         :key="index"
+        @edit="handleEdit(item)"
         >{{ item.name }}</AsideList
       >
     </div>
@@ -21,7 +22,7 @@
       />
     </div>
   </el-aside>
-  <FormDrawer title="新增" ref="formDrawerRef" @submit="handleSubmit">
+  <FormDrawer :title="drawerTitle" ref="formDrawerRef" @submit="handleSubmit">
     <el-form
       :model="form"
       ref="formRef"
@@ -40,9 +41,13 @@
 </template>
 <script setup>
 import FormDrawer from "./FormDrawer.vue";
-import { getImageClassList, createImageClass } from "@/api/image_class.js";
+import {
+  getImageClassList,
+  createImageClass,
+  updateImageClass,
+} from "@/api/image_class.js";
 import { number } from "echarts";
-import { reactive, ref } from "vue";
+import { computed, reactive, ref } from "vue";
 import AsideList from "./AsideList.vue";
 import { toast } from "@/utils/util";
 
@@ -78,11 +83,9 @@ function getData(p = null) {
 
 getData();
 
+const editId = ref(0);
+const drawerTitle = computed(() => (editId.value ? "修改" : "新增"));
 const formDrawerRef = ref(null);
-
-// 打开弹框
-const handleCreate = () => formDrawerRef.value.open();
-
 const form = reactive({
   name: "",
   order: 50,
@@ -99,16 +102,38 @@ const handleSubmit = () => {
     if (!valid) return;
 
     formDrawerRef.value.showLoading();
-    createImageClass(form)
+
+    // 判断是否有id则为编辑,id为0则为新增
+    const fun = editId.value
+      ? updateImageClass(editId.value, form)
+      : createImageClass(form);
+
+    fun
       .then((res) => {
-        toast("新增成功");
-        getData(1);
+        toast(drawerTitle.value + "成功");
+        getData(editId.value ? currentPage.value : 1);
         formDrawerRef.value.close();
       })
       .finally(() => {
         formDrawerRef.value.hideLoading();
       });
   });
+};
+
+// 打开弹框
+const handleCreate = () => {
+  editId.value = 0;
+  form.name = "";
+  form.order = 50;
+  formDrawerRef.value.open();
+};
+
+// 编辑
+const handleEdit = (row) => {
+  editId.value = row.id;
+  form.name = row.name;
+  form.order = row.order;
+  formDrawerRef.value.open();
 };
 
 defineExpose({
