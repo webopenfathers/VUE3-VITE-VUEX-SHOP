@@ -7,6 +7,7 @@
         v-for="(item, index) in list"
         :key="index"
         @edit="handleEdit(item)"
+        @delete="handleDelete(item.id)"
         >{{ item.name }}</AsideList
       >
     </div>
@@ -45,6 +46,7 @@ import {
   getImageClassList,
   createImageClass,
   updateImageClass,
+  deleteImageClass,
 } from "@/api/image_class.js";
 import { number } from "echarts";
 import { computed, reactive, ref } from "vue";
@@ -134,6 +136,19 @@ const handleEdit = (row) => {
   form.name = row.name;
   form.order = row.order;
   formDrawerRef.value.open();
+};
+
+// 删除
+const handleDelete = (id) => {
+  loading.value = true;
+  deleteImageClass(id)
+    .then((res) => {
+      toast("删除成功");
+      getData();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 defineExpose({
