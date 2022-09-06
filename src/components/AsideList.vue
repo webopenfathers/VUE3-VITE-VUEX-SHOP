@@ -6,7 +6,7 @@
       text
       type="primary"
       size="small"
-      @click="$emit('edit')"
+      @click.stop="$emit('edit')"
     >
       <el-icon :size="12"><Edit /></el-icon>
     </el-button>
