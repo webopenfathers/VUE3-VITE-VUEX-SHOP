@@ -40,10 +40,11 @@
 </template>
 <script setup>
 import FormDrawer from "./FormDrawer.vue";
-import { getImageClassList } from "@/api/image_class.js";
+import { getImageClassList, createImageClass } from "@/api/image_class.js";
 import { number } from "echarts";
 import { reactive, ref } from "vue";
 import AsideList from "./AsideList.vue";
+import { toast } from "@/utils/util";
 
 // 加载动画
 const loading = ref(false);
@@ -96,7 +97,17 @@ const formRef = ref(null);
 const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) return;
-    console.log("提交成功");
+
+    formDrawerRef.value.showLoading();
+    createImageClass(form)
+      .then((res) => {
+        toast("新增成功");
+        getData(1);
+        formDrawerRef.value.close();
+      })
+      .finally(() => {
+        formDrawerRef.value.hideLoading();
+      });
   });
 };
 
