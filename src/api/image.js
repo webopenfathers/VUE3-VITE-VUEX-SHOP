@@ -19,3 +19,4 @@ export function deleteImage(ids) {
 }
 
 
+export const uploadImageAction = '/api/admin/image/upload'
