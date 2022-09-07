@@ -17,7 +17,9 @@
       <el-table-column prop="create_time" label="发布时间" />
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{ row }">
-          <el-button type="primary" size="small" text>修改</el-button>
+          <el-button type="primary" size="small" text @click="handleEdit(row)"
+            >修改</el-button
+          >
           <el-popconfirm
             title="是否要删除该公告?"
             confirm-button-text="确认"
@@ -43,7 +45,7 @@
       />
     </div>
     <!-- 弹框 -->
-    <FormDrawer ref="formDrawerRef" title="新增" @submit="handleSubmit">
+    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
       <el-form
         :model="form"
         ref="formRef"
@@ -71,9 +73,15 @@
 </template>
 <script setup>
 import { reactive, ref } from "@vue/reactivity";
-import { getNoticeList, createNotice } from "@/api/notice";
+import {
+  getNoticeList,
+  createNotice,
+  updateNotice,
+  deleteNotice,
+} from "@/api/notice";
 import FormDrawer from "@/components/FormDrawer.vue";
 import { toast } from "../../utils/util";
+import { computed } from "@vue/runtime-core";
 
 const tableData = ref([]);
 // 加载动画
@@ -104,7 +112,15 @@ getData();
 
 // 删除
 const handleDelete = (id) => {
-  console.log(id);
+  loading.value = true;
+  deleteNotice(id)
+    .then((res) => {
+      toast("删除成功");
+      getData();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
 };
 
 //表单部分
@@ -119,15 +135,24 @@ const rules = {
   title: [{ required: true, message: "公告名称不能为空", trigger: "blur" }],
   content: [{ required: true, message: "公告内容不能为空", trigger: "blur" }],
 };
+
+const editId = ref(0);
+const drawerTitle = computed(() => (editId.value ? "修改" : "新增"));
+
 const handleSubmit = () => {
   formRef.value.validate((valid) => {
     if (!valid) return;
 
     formDrawerRef.value.showLoading();
-    createNotice(form)
+    const fun = editId.value
+      ? updateNotice(editId.value, form)
+      : createNotice(form);
+    // 创建
+    fun
       .then((res) => {
-        toast("新增成功");
-        getData(1);
+        toast(drawerTitle.value + "成功");
+        // 修改刷新当前页，新增刷新第一页
+        getData(editId.value ? currentPage.value : 1);
         formDrawerRef.value.close();
       })
       .finally(() => {
@@ -135,9 +160,28 @@ const handleSubmit = () => {
       });
   });
 };
+// 重置表单
+function resetForm(row) {
+  if (formRef.value) formRef.value.clearValidate();
+  for (const key in form) {
+    form[key] = row[key];
+  }
+}
 
-// 打开弹框
+// 新增
 const handleCreate = () => {
+  editId.value = 0;
+  resetForm({
+    title: "",
+    content: "",
+  });
+  formDrawerRef.value.open();
+};
+
+// 修改
+const handleEdit = (row) => {
+  editId.value = row.id;
+  resetForm(row);
   formDrawerRef.value.open();
 };
 </script>
