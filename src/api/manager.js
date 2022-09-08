@@ -37,3 +37,9 @@ export function getManagerList(page, data) {
 }
 
 
+// 修改管理员状态
+export function updateManagerStatus(id, status) {
+    return axios.post(`/admin/manager/${id}/update_status`, { status })
+}
+
+

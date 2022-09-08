@@ -57,26 +57,34 @@
           <el-switch
             :modelValue="row.status"
             :active-value="1"
+            :disabled="row.super === 1"
+            :loading="row.statusLoading"
             :inactive-value="0"
+            @change="handleStatusChange($event, row)"
           >
           </el-switch>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center">
         <template v-slot="{ row }">
-          <el-button type="primary" size="small" text @click="handleEdit(row)"
-            >修改</el-button
+          <small v-if="row.super === 1" class="text-sm text-gray-500"
+            >暂无操作</small
           >
-          <el-popconfirm
-            title="是否要删除该管理员?"
-            confirm-button-text="确认"
-            cancel-button-text="取消"
-            @confirm="handleDelete(row.id)"
-          >
-            <template #reference>
-              <el-button text type="primary" size="small"> 删除 </el-button>
-            </template>
-          </el-popconfirm>
+          <div v-else>
+            <el-button type="primary" size="small" text @click="handleEdit(row)"
+              >修改</el-button
+            >
+            <el-popconfirm
+              title="是否要删除该管理员?"
+              confirm-button-text="确认"
+              cancel-button-text="取消"
+              @confirm="handleDelete(row.id)"
+            >
+              <template #reference>
+                <el-button text type="primary" size="small"> 删除 </el-button>
+              </template>
+            </el-popconfirm>
+          </div>
         </template>
       </el-table-column>
     </el-table>
@@ -126,7 +134,7 @@ import {
   updateNotice,
   deleteNotice,
 } from "@/api/notice";
-import { getManagerList } from "@/api/manager.js";
+import { getManagerList, updateManagerStatus } from "@/api/manager.js";
 import FormDrawer from "@/components/FormDrawer.vue";
 import { toast } from "../../utils/util";
 import { computed } from "@vue/runtime-core";
@@ -158,7 +166,11 @@ function getData(p = null) {
   loading.value = true;
   getManagerList(currentPage.value, searchForm)
     .then((res) => {
-      tableData.value = res.list;
+      // 使用map的原因给每个对象添加一个loading状态
+      tableData.value = res.list.map((o) => {
+        o.statusLoading = false;
+        return o;
+      });
       total.value = res.totalCount;
     })
     .finally(() => {
@@ -241,5 +253,18 @@ const handleEdit = (row) => {
   editId.value = row.id;
   resetForm(row);
   formDrawerRef.value.open();
+};
+
+// 修改状态
+const handleStatusChange = (status, row) => {
+  row.statusLoading = true;
+  updateManagerStatus(row.id, status)
+    .then((res) => {
+      toast("修改状态成功");
+      row.status = status;
+    })
+    .finally(() => {
+      row.statusLoading = false;
+    });
 };
 </script>
