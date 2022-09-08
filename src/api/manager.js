@@ -1,5 +1,5 @@
 import axios from '@/axios'
-
+import Qs from 'qs'
 
 // 登录接口
 export function login(username, password) {
@@ -24,6 +24,16 @@ export function logout() {
 // 修改密码
 export function updatePassword(data) {
     return axios.post('/admin/updatepassword', data)
+}
+
+
+// 管理员列表
+export function getManagerList(page, data) {
+    for (const key in data) {
+        if (data[key] === '') delete data[key]
+    }
+    return axios.get(`/admin/manager/${page}?${Qs.stringify(data)
+        }`)
 }
 
 
