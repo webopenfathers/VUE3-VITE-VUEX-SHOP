@@ -49,7 +49,7 @@
           </div>
         </template>
       </el-table-column>
-      <el-table-column label="所属管理员">
+      <el-table-column label="所属角色">
         <template v-slot="{ row }"> {{ row.role?.name || "-" }}</template>
       </el-table-column>
       <el-table-column prop="create_time" label="状态">
@@ -75,7 +75,7 @@
               >修改</el-button
             >
             <el-popconfirm
-              title="是否要删除该管理员?"
+              title="是否要删除该角色?"
               confirm-button-text="确认"
               cancel-button-text="取消"
               @confirm="handleDelete(row.id)"
@@ -108,19 +108,40 @@
         label-width="80px"
         :inline="false"
       >
-        <el-form-item label="公告标题" prop="title">
+        <el-form-item label="用户名" prop="username">
           <el-input
-            v-model="form.title"
-            placeholder="请输入公告标题"
+            v-model="form.username"
+            placeholder="请输入用户名"
           ></el-input>
         </el-form-item>
-        <el-form-item label="公告内容" prop="content">
+        <el-form-item label="密码" prop="password">
           <el-input
-            v-model="form.content"
-            placeholder="请输入公告内容"
-            type="textarea"
+            v-model="form.password"
+            placeholder="请输入密码"
             :rows="5"
           ></el-input>
+        </el-form-item>
+        <el-form-item label="头像" prop="avatar">
+          <el-input v-model="form.avatar" placeholder="请上传头像"></el-input>
+        </el-form-item>
+        <el-form-item label="所属角色" prop="role_id">
+          <el-select v-model="form.role_id" placeholder="请选择所属角色">
+            <el-option
+              v-for="item in roles"
+              :key="item.id"
+              :label="item.name"
+              :value="item.id"
+            >
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="状态" prop="status">
+          <el-switch
+            v-model="form.status"
+            :active-value="1"
+            :inactive-value="0"
+          >
+          </el-switch>
         </el-form-item>
       </el-form>
     </FormDrawer>
@@ -129,12 +150,12 @@
 <script setup>
 import { reactive, ref } from "@vue/reactivity";
 import {
-  getNoticeList,
-  createNotice,
-  updateNotice,
-  deleteNotice,
-} from "@/api/notice";
-import { getManagerList, updateManagerStatus } from "@/api/manager.js";
+  getManagerList,
+  updateManagerStatus,
+  createManager,
+  updateManager,
+  deleteManager,
+} from "@/api/manager.js";
 import FormDrawer from "@/components/FormDrawer.vue";
 import { toast } from "../../utils/util";
 import { computed } from "@vue/runtime-core";
@@ -149,6 +170,7 @@ const resetSearchForm = () => {
   getData();
 };
 
+const roles = ref([]);
 const tableData = ref([]);
 // 加载动画
 const loading = ref(false);
@@ -172,6 +194,7 @@ function getData(p = null) {
         return o;
       });
       total.value = res.totalCount;
+      roles.value = res.roles;
     })
     .finally(() => {
       loading.value = false;
@@ -183,7 +206,7 @@ getData();
 // 删除
 const handleDelete = (id) => {
   loading.value = true;
-  deleteNotice(id)
+  deleteManager(id)
     .then((res) => {
       toast("删除成功");
       getData();
@@ -197,13 +220,18 @@ const handleDelete = (id) => {
 const formDrawerRef = ref(null);
 const formRef = ref(null);
 const form = reactive({
-  title: "",
-  content: "",
+  username: "",
+  password: "",
+  role_id: null,
+  password: "",
+  status: 1,
+  avatar: "",
 });
 
 const rules = {
-  title: [{ required: true, message: "公告名称不能为空", trigger: "blur" }],
-  content: [{ required: true, message: "公告内容不能为空", trigger: "blur" }],
+  username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+  password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
+  role_id: [{ required: true, message: "所属角色不能为空", trigger: "blur" }],
 };
 
 const editId = ref(0);
@@ -215,8 +243,8 @@ const handleSubmit = () => {
 
     formDrawerRef.value.showLoading();
     const fun = editId.value
-      ? updateNotice(editId.value, form)
-      : createNotice(form);
+      ? updateManager(editId.value, form)
+      : createManager(form);
     // 创建
     fun
       .then((res) => {
@@ -242,8 +270,12 @@ function resetForm(row) {
 const handleCreate = () => {
   editId.value = 0;
   resetForm({
-    title: "",
-    content: "",
+    username: "",
+    password: "",
+    role_id: null,
+    password: "",
+    status: 1,
+    avatar: "",
   });
   formDrawerRef.value.open();
 };
