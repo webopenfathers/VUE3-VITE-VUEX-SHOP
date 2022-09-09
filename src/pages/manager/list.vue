@@ -148,7 +148,7 @@
   </el-card>
 </template>
 <script setup>
-import { reactive, ref } from "@vue/reactivity";
+import { reactive, ref, computed } from "vue";
 import {
   getManagerList,
   updateManagerStatus,
@@ -159,50 +159,34 @@ import {
 import FormDrawer from "@/components/FormDrawer.vue";
 import ChooseImage from "@/components/ChooseImage.vue";
 import { toast } from "../../utils/util";
-import { computed } from "@vue/runtime-core";
-
-const searchForm = reactive({
-  keyword: "",
-});
-
-// 重置
-const resetSearchForm = () => {
-  searchForm.keyword = "";
-  getData();
-};
+import { useInitTable } from "@/utils/useCommon.js";
 
 const roles = ref([]);
-const tableData = ref([]);
-// 加载动画
-const loading = ref(false);
 
-// 分页
-const currentPage = ref(1);
-const total = ref(0);
-const limit = ref(10);
-
-// 获取数据
-function getData(p = null) {
-  if (typeof p === "number") {
-    currentPage.value = p;
-  }
-  loading.value = true;
-  getManagerList(currentPage.value, searchForm)
-    .then((res) => {
-      // 使用map的原因给每个对象添加一个loading状态
-      tableData.value = res.list.map((o) => {
-        o.statusLoading = false;
-        return o;
-      });
-      total.value = res.totalCount;
-      roles.value = res.roles;
-    })
-    .finally(() => {
-      loading.value = false;
+const {
+  searchForm,
+  resetSearchForm,
+  tableData,
+  loading,
+  currentPage,
+  total,
+  limit,
+  getData,
+} = useInitTable({
+  searchForm: {
+    keyword: "",
+  },
+  getList: getManagerList,
+  onGetListSuccess: (res) => {
+    // 使用map的原因给每个对象添加一个loading状态;
+    tableData.value = res.list.map((o) => {
+      o.statusLoading = false;
+      return o;
     });
-}
-
-getData();
+    total.value = res.totalCount;
+    roles.value = res.roles;
+  },
+});
 
 // 删除
 const handleDelete = (id) => {

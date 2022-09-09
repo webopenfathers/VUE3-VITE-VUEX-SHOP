@@ -82,33 +82,13 @@ import {
 import FormDrawer from "@/components/FormDrawer.vue";
 import { toast } from "../../utils/util";
 import { computed } from "@vue/runtime-core";
+import { useInitTable } from "@/utils/useCommon.js";
 
-const tableData = ref([]);
-// 加载动画
-const loading = ref(false);
-
-// 分页
-const currentPage = ref(1);
-const total = ref(0);
-const limit = ref(10);
-
-// 获取数据
-function getData(p = null) {
-  if (typeof p === "number") {
-    currentPage.value = p;
+const { tableData, loading, currentPage, total, limit, getData } = useInitTable(
+  {
+    getList: getNoticeList,
   }
-  loading.value = true;
-  getNoticeList(currentPage.value)
-    .then((res) => {
-      tableData.value = res.list;
-      total.value = res.totalCount;
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-}
-
-getData();
+);
 
 // 删除
 const handleDelete = (id) => {
