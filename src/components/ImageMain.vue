@@ -13,6 +13,7 @@
             shadow="hover"
             class="relative mb-3"
             :body-style="{ padding: 0 }"
+            :class="{ 'border-blue-500': item.checked }"
           >
             <el-image
               :src="item.url"
@@ -25,6 +26,11 @@
             <!-- 标题 -->
             <div class="image-title">{{ item.name }}</div>
             <div class="flex items-center justify-center p-2">
+              <el-checkbox
+                v-if="openChoose"
+                v-model="item.checked"
+                @change="handleChooseChange(item)"
+              />
               <el-button
                 type="primary"
                 size="small"
@@ -39,7 +45,9 @@
                 @confirm="handleDelete(item.id)"
               >
                 <template #reference>
-                  <el-button type="primary" size="small" text>删除</el-button>
+                  <el-button class="!m-0" type="primary" size="small" text
+                    >删除</el-button
+                  >
                 </template>
               </el-popconfirm>
             </div>
@@ -66,7 +74,7 @@
 </template>
 <script setup>
 import { getImageList, updateImage, deleteImage } from "@/api/image";
-import { ref } from "vue";
+import { computed, ref } from "vue";
 import { showPrompt } from "@/utils/util.js";
 import { toast } from "@/utils/util";
 import UploadFile from "@/components/UploadFile.vue";
@@ -93,7 +101,10 @@ function getData(p = null) {
   getImageList(image_class_id.value, currentPage.value)
     .then((res) => {
       total.value = res.totalCount;
-      list.value = res.list;
+      list.value = res.list.map((o) => {
+        o.checked = false;
+        return o;
+      });
     })
     .finally(() => {
       loading.value = false;
@@ -135,11 +146,32 @@ const handleDelete = (id) => {
     });
 };
 
+defineProps({
+  openChoose: {
+    type: Boolean,
+    default: false,
+  },
+});
+
 // 上传成功
 const handleUploadSuccess = (res) => {
   toast("上传成功");
   getData(1);
   drawer.value = false;
+};
+
+// 选中的图片
+const emit = defineEmits(["choose"]);
+const checkedImage = computed(() => list.value.filter((o) => o.checked));
+
+const handleChooseChange = (item) => {
+  if (item.checked && checkedImage.value.length > 1) {
+    console.log(8888);
+    item.checked = false;
+    return toast("最多只能选中一张", "error");
+  }
+
+  emit("choose", checkedImage.value);
 };
 
 defineExpose({

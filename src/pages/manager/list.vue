@@ -122,7 +122,7 @@
           ></el-input>
         </el-form-item>
         <el-form-item label="头像" prop="avatar">
-          <el-input v-model="form.avatar" placeholder="请上传头像"></el-input>
+          <ChooseImage v-model="form.avatar" />
         </el-form-item>
         <el-form-item label="所属角色" prop="role_id">
           <el-select v-model="form.role_id" placeholder="请选择所属角色">
@@ -157,6 +157,7 @@ import {
   deleteManager,
 } from "@/api/manager.js";
 import FormDrawer from "@/components/FormDrawer.vue";
+import ChooseImage from "@/components/ChooseImage.vue";
 import { toast } from "../../utils/util";
 import { computed } from "@vue/runtime-core";
 
