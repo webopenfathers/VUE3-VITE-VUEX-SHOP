@@ -91,11 +91,13 @@
       <el-tree-v2
         node-key="id"
         ref="elTreeRef"
+        :check-strictly="checkStrictly"
         :default-expanded-keys="defaultExpandedKeys"
         :data="ruleList"
         :props="{ label: 'name', children: 'child' }"
         show-checkbox
         :height="treeHeight"
+        @check="handleTreeCheck"
       >
         <template #default="{ node, data }">
           <div class="flex items-center">
@@ -116,12 +118,14 @@ import {
   updateRole,
   deleteRole,
   updateRoleStatus,
+  setRoleRules,
 } from "@/api/role";
 import { getRuleList } from "@/api/rule";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 import { ref } from "@vue/reactivity";
+import { toast } from "@/utils/util";
 
 const {
   tableData,
@@ -171,9 +175,14 @@ const elTreeRef = ref(null);
 // 当前用户拥有的权限ID;
 const ruleIds = ref([]);
 
+const checkStrictly = ref(false);
+
 const openSetRule = (row) => {
   roleId.value = row.id;
   treeHeight.value = window.innerHeight - 180;
+  // 父子设置为不关联
+  checkStrictly.value = true;
+
   getRuleList(1).then((res) => {
     ruleList.value = res.list;
     defaultExpandedKeys.value = res.list.map((o) => o.id);
@@ -183,9 +192,28 @@ const openSetRule = (row) => {
     ruleIds.value = row.rules.map((o) => o.id);
     setTimeout(() => {
       elTreeRef.value.setCheckedKeys(ruleIds.value);
+
+      // 获取到数据以后设置为相互关联
+      checkStrictly.value = false;
     });
   });
 };
 
-const handleSetRuleSubmit = () => {};
+const handleSetRuleSubmit = () => {
+  setRuleFormDrawerRef.value.showLoading();
+  setRoleRules(roleId.value, ruleIds.value)
+    .then((res) => {
+      toast("配置成功");
+      getData();
+      setRuleFormDrawerRef.value.close();
+    })
+    .finally(() => {
+      setRuleFormDrawerRef.value.hideLoading();
+    });
+};
+
+const handleTreeCheck = (...e) => {
+  const { checkedKeys, halfCheckedKeys } = e[1];
+  ruleIds.value = [...checkedKeys, ...halfCheckedKeys];
+};
 </script>
