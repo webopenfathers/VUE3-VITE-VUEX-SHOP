@@ -6,7 +6,7 @@
         <el-col :span="8" :offset="0">
           <el-form-item label="关键词">
             <el-input
-              v-model="searchForm.keyword"
+              v-model.trim="searchForm.keyword"
               placeholder="管理员名称"
               clearable
             ></el-input>
@@ -158,8 +158,8 @@ import {
 } from "@/api/manager.js";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ChooseImage from "@/components/ChooseImage.vue";
-import { toast } from "../../utils/util";
-import { useInitTable } from "@/utils/useCommon.js";
+import { toast } from "@/utils/util";
+import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
 const roles = ref([]);
 
@@ -188,6 +188,35 @@ const {
   },
 });
 
+const {
+  formDrawerRef,
+  formRef,
+  form,
+  rules,
+  drawerTitle,
+  handleSubmit,
+  handleCreate,
+  handleEdit,
+} = useInitForm({
+  form: {
+    username: "",
+    password: "",
+    role_id: null,
+    password: "",
+    status: 1,
+    avatar: "",
+  },
+  rules: {
+    username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
+    password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
+    role_id: [{ required: true, message: "所属角色不能为空", trigger: "blur" }],
+  },
+  getData,
+  currentPage,
+  update: updateManager,
+  create: createManager,
+});
+
 // 删除
 const handleDelete = (id) => {
   loading.value = true;
@@ -199,77 +228,6 @@ const handleDelete = (id) => {
     .finally(() => {
       loading.value = false;
     });
-};
-
-//表单部分
-const formDrawerRef = ref(null);
-const formRef = ref(null);
-const form = reactive({
-  username: "",
-  password: "",
-  role_id: null,
-  password: "",
-  status: 1,
-  avatar: "",
-});
-
-const rules = {
-  username: [{ required: true, message: "用户名不能为空", trigger: "blur" }],
-  password: [{ required: true, message: "密码不能为空", trigger: "blur" }],
-  role_id: [{ required: true, message: "所属角色不能为空", trigger: "blur" }],
-};
-
-const editId = ref(0);
-const drawerTitle = computed(() => (editId.value ? "修改" : "新增"));
-
-const handleSubmit = () => {
-  formRef.value.validate((valid) => {
-    if (!valid) return;
-
-    formDrawerRef.value.showLoading();
-    const fun = editId.value
-      ? updateManager(editId.value, form)
-      : createManager(form);
-    // 创建
-    fun
-      .then((res) => {
-        toast(drawerTitle.value + "成功");
-        // 修改刷新当前页，新增刷新第一页
-        getData(editId.value ? currentPage.value : 1);
-        formDrawerRef.value.close();
-      })
-      .finally(() => {
-        formDrawerRef.value.hideLoading();
-      });
-  });
-};
-// 重置表单
-function resetForm(row) {
-  if (formRef.value) formRef.value.clearValidate();
-  for (const key in form) {
-    form[key] = row[key];
-  }
-}
-
-// 新增
-const handleCreate = () => {
-  editId.value = 0;
-  resetForm({
-    username: "",
-    password: "",
-    role_id: null,
-    password: "",
-    status: 1,
-    avatar: "",
-  });
-  formDrawerRef.value.open();
-};
-
-// 修改
-const handleEdit = (row) => {
-  editId.value = row.id;
-  resetForm(row);
-  formDrawerRef.value.open();
 };
 
 // 修改状态
