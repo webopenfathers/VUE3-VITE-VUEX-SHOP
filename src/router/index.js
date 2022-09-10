@@ -14,6 +14,7 @@ import SettingBase from '@/pages/setting/base.vue'
 import CouponList from '@/pages/coupon/list.vue'
 import ManagerList from '@/pages/manager/list.vue'
 import AccessList from '@/pages/access/list.vue'
+import RoleList from '@/pages/role/list.vue'
 
 
 
@@ -135,6 +136,14 @@ const asyncRoutes = [
         component: AccessList,
         meta: {
             title: '菜单权限管理'
+        }
+    },
+    {
+        path: '/role/list',
+        name: '/role/list',
+        component: RoleList,
+        meta: {
+            title: '角色管理'
         }
     },
 ]
