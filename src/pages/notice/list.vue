@@ -72,7 +72,6 @@
   </el-card>
 </template>
 <script setup>
-import { reactive, ref } from "@vue/reactivity";
 import {
   getNoticeList,
   createNotice,
@@ -80,15 +79,13 @@ import {
   deleteNotice,
 } from "@/api/notice";
 import FormDrawer from "@/components/FormDrawer.vue";
-import { toast } from "../../utils/util";
-import { computed } from "@vue/runtime-core";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
-const { tableData, loading, currentPage, total, limit, getData } = useInitTable(
-  {
+const { tableData, loading, currentPage, total, limit, getData, handleDelete } =
+  useInitTable({
     getList: getNoticeList,
-  }
-);
+    delete: deleteNotice,
+  });
 
 const {
   formDrawerRef,
@@ -112,17 +109,4 @@ const {
   update: updateNotice,
   create: createNotice,
 });
-
-// 删除
-const handleDelete = (id) => {
-  loading.value = true;
-  deleteNotice(id)
-    .then((res) => {
-      toast("删除成功");
-      getData();
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-};
 </script>

@@ -148,7 +148,7 @@
   </el-card>
 </template>
 <script setup>
-import { reactive, ref, computed } from "vue";
+import { ref } from "vue";
 import {
   getManagerList,
   updateManagerStatus,
@@ -158,7 +158,6 @@ import {
 } from "@/api/manager.js";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ChooseImage from "@/components/ChooseImage.vue";
-import { toast } from "@/utils/util";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
 const roles = ref([]);
@@ -172,6 +171,8 @@ const {
   total,
   limit,
   getData,
+  handleDelete,
+  handleStatusChange,
 } = useInitTable({
   searchForm: {
     keyword: "",
@@ -186,6 +187,8 @@ const {
     total.value = res.totalCount;
     roles.value = res.roles;
   },
+  delete: deleteManager,
+  updateStatus: updateManagerStatus,
 });
 
 const {
@@ -216,30 +219,4 @@ const {
   update: updateManager,
   create: createManager,
 });
-
-// 删除
-const handleDelete = (id) => {
-  loading.value = true;
-  deleteManager(id)
-    .then((res) => {
-      toast("删除成功");
-      getData();
-    })
-    .finally(() => {
-      loading.value = false;
-    });
-};
-
-// 修改状态
-const handleStatusChange = (status, row) => {
-  row.statusLoading = true;
-  updateManagerStatus(row.id, status)
-    .then((res) => {
-      toast("修改状态成功");
-      row.status = status;
-    })
-    .finally(() => {
-      row.statusLoading = false;
-    });
-};
 </script>

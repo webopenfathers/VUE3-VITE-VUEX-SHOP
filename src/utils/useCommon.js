@@ -1,7 +1,7 @@
 import { reactive, ref, computed } from "vue";
 import { toast } from "@/utils/util";
 
-// 表格列表--分页---搜索
+// 表格列表--分页---搜索----删除-----修改状态
 export function useInitTable(opt = {}) {
     let searchForm = null
     let resetSearchForm = null
@@ -51,6 +51,37 @@ export function useInitTable(opt = {}) {
 
     getData();
 
+
+    // 删除
+    const handleDelete = (id) => {
+        loading.value = true;
+        opt.delete(id)
+            .then((res) => {
+                toast("删除成功");
+                getData();
+            })
+            .finally(() => {
+                loading.value = false;
+            });
+    };
+
+    // 修改状态
+    const handleStatusChange = (status, row) => {
+        row.statusLoading = true;
+        opt.updateStatus(row.id, status)
+            .then((res) => {
+                toast("修改状态成功");
+                row.status = status;
+            })
+            .finally(() => {
+                row.statusLoading = false;
+            });
+    };
+
+
+
+
+
     return {
         // return 以后也是响应式
         searchForm,
@@ -60,7 +91,9 @@ export function useInitTable(opt = {}) {
         currentPage,
         total,
         limit,
-        getData
+        getData,
+        handleDelete,
+        handleStatusChange
     }
 }
 
@@ -137,3 +170,7 @@ export function useInitForm(opt = {}) {
         handleEdit
     }
 }
+
+
+
+
