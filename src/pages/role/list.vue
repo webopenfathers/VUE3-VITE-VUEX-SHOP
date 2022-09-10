@@ -89,11 +89,23 @@
       @submit="handleSetRuleSubmit"
     >
       <el-tree-v2
+        node-key="id"
+        ref="elTreeRef"
+        :default-expanded-keys="defaultExpandedKeys"
         :data="ruleList"
         :props="{ label: 'name', children: 'child' }"
         show-checkbox
         :height="treeHeight"
-      />
+      >
+        <template #default="{ node, data }">
+          <div class="flex items-center">
+            <el-tag :type="data.menu ? '' : 'info'" size="small">
+              {{ data.menu ? "菜单" : "权限" }}
+            </el-tag>
+            <span class="ml-2 text-sm">{{ data.name }}</span>
+          </div>
+        </template>
+      </el-tree-v2>
     </FormDrawer>
   </el-card>
 </template>
@@ -154,13 +166,25 @@ const setRuleFormDrawerRef = ref(null);
 const ruleList = ref([]);
 const treeHeight = ref(0);
 const roleId = ref(0);
+const defaultExpandedKeys = ref([]);
+const elTreeRef = ref(null);
+// 当前用户拥有的权限ID;
+const ruleIds = ref([]);
+
 const openSetRule = (row) => {
   roleId.value = row.id;
-  treeHeight.value = window.innerHeight - 170;
+  treeHeight.value = window.innerHeight - 180;
   getRuleList(1).then((res) => {
     ruleList.value = res.list;
+    defaultExpandedKeys.value = res.list.map((o) => o.id);
+    setRuleFormDrawerRef.value.open();
+
+    // 必须在弹框打开以后，获取当前用户拥有的权限ID
+    ruleIds.value = row.rules.map((o) => o.id);
+    setTimeout(() => {
+      elTreeRef.value.setCheckedKeys(ruleIds.value);
+    });
   });
-  setRuleFormDrawerRef.value.open();
 };
 
 const handleSetRuleSubmit = () => {};
