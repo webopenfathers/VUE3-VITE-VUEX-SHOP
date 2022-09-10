@@ -3,7 +3,7 @@
     <el-image
       :src="modelValue"
       fit="cover"
-      class="w-[100px] h-[100px] rounded border mr-2"
+      class="w-[100px] h-[100px] rounded border mr-2 mt-2"
     ></el-image>
   </div>
   <div class="choose-image-btn" @click="open">

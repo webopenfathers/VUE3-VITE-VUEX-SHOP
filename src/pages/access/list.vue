@@ -75,7 +75,7 @@
           <el-input v-model="form.name" style="width: 30%"></el-input>
         </el-form-item>
         <el-form-item label="菜单图标" prop="icon" v-if="form.menu === 1">
-          <el-input v-model="form.icon"></el-input>
+          <IconSelect v-model="form.icon"></IconSelect>
         </el-form-item>
         <el-form-item
           label="前端路由"
@@ -88,11 +88,7 @@
           <el-input v-model="form.condition"></el-input>
         </el-form-item>
         <el-form-item label="请求方式" prop="method" v-if="form.menu === 0">
-          <el-select
-            v-model="form.method"
-            class="m-2"
-            placeholder="请选择请求方式"
-          >
+          <el-select v-model="form.method" placeholder="请选择请求方式">
             <el-option
               v-for="item in ['GET', 'POST', 'PUT', 'DELETE']"
               :key="item"
@@ -111,6 +107,7 @@
 <script setup>
 import ListHeader from "@/components/ListHeader.vue";
 import FormDrawer from "@/components/FormDrawer.vue";
+import IconSelect from "@/components/IconSelect.vue";
 import { getRuleList, createRule, updateRule } from "@/api/rule.js";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 import { ref } from "vue";
