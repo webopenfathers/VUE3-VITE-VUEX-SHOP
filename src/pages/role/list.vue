@@ -19,8 +19,11 @@
           </el-switch>
         </template>
       </el-table-column>
-      <el-table-column label="操作" width="180" align="center">
+      <el-table-column label="操作" align="center">
         <template v-slot="{ row }">
+          <el-button type="primary" size="small" text @click="openSetRule(row)"
+            >配置权限</el-button
+          >
           <el-button type="primary" size="small" text @click="handleEdit(row)"
             >修改</el-button
           >
@@ -78,6 +81,20 @@
         </el-form-item>
       </el-form>
     </FormDrawer>
+
+    <!-- 权限配置 -->
+    <FormDrawer
+      ref="setRuleFormDrawerRef"
+      title="权限配置"
+      @submit="handleSetRuleSubmit"
+    >
+      <el-tree-v2
+        :data="ruleList"
+        :props="{ label: 'name', children: 'child' }"
+        show-checkbox
+        :height="treeHeight"
+      />
+    </FormDrawer>
   </el-card>
 </template>
 <script setup>
@@ -88,9 +105,11 @@ import {
   deleteRole,
   updateRoleStatus,
 } from "@/api/role";
+import { getRuleList } from "@/api/rule";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
+import { ref } from "@vue/reactivity";
 
 const {
   tableData,
@@ -130,4 +149,19 @@ const {
   update: updateRole,
   create: createRole,
 });
+
+const setRuleFormDrawerRef = ref(null);
+const ruleList = ref([]);
+const treeHeight = ref(0);
+const roleId = ref(0);
+const openSetRule = (row) => {
+  roleId.value = row.id;
+  treeHeight.value = window.innerHeight - 170;
+  getRuleList(1).then((res) => {
+    ruleList.value = res.list;
+  });
+  setRuleFormDrawerRef.value.open();
+};
+
+const handleSetRuleSubmit = () => {};
 </script>
