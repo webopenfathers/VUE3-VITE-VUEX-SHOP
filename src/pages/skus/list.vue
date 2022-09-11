@@ -50,7 +50,12 @@
       />
     </div>
     <!-- 弹框 -->
-    <FormDrawer ref="formDrawerRef" :title="drawerTitle" @submit="handleSubmit">
+    <FormDrawer
+      destroyOnClose
+      ref="formDrawerRef"
+      :title="drawerTitle"
+      @submit="handleSubmit"
+    >
       <el-form
         :model="form"
         ref="formRef"
@@ -74,7 +79,7 @@
           </el-switch>
         </el-form-item>
         <el-form-item label="规格值" prop="default">
-          <el-input v-model="form.default" placeholder="规格值"></el-input>
+          <TagInput v-model="form.default"></TagInput>
         </el-form-item>
       </el-form>
     </FormDrawer>
@@ -90,6 +95,7 @@ import {
 } from "@/api/skus";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
+import TagInput from "@/components/TagInput.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 import { ref } from "@vue/reactivity";
 import { toast } from "@/utils/util";
