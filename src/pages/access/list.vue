@@ -44,16 +44,18 @@
               @click.stop="addChild(data.id)"
               >增加</el-button
             >
-            <el-popconfirm
-              title="是否要删除该记录?"
-              confirm-button-text="确认"
-              cancel-button-text="取消"
-              @confirm="handleDelete(data.id)"
-            >
-              <template #reference>
-                <el-button text type="primary" size="small"> 删除 </el-button>
-              </template>
-            </el-popconfirm>
+            <span @click.stop="() => {}">
+              <el-popconfirm
+                title="是否要删除该记录?"
+                confirm-button-text="确认"
+                cancel-button-text="取消"
+                @confirm="handleDelete(data.id)"
+              >
+                <template #reference>
+                  <el-button text type="primary" size="small"> 删除 </el-button>
+                </template>
+              </el-popconfirm>
+            </span>
           </div>
         </div>
       </template>

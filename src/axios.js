@@ -29,13 +29,14 @@ service.interceptors.response.use(function (response) {
 }, function (error) {
     // 对响应错误做点什么
     const msg = error.response.data.msg || "请求失败"
+
     if (msg == '非法token，请先登录！') {
         store.dispatch('logout').finally(() => {
             location.reload()
         })
     }
 
-    toast(msg, 'error')
+    (msg.indexOf('禁止操作') !== -1) ? toast('默认数据，禁止删除', 'error') : toast(msg, 'error')
 
     return Promise.reject(error);
 });
