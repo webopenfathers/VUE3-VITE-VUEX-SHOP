@@ -24,12 +24,14 @@
 
           <!--右边部分 -->
           <div class="ml-auto">
-            <el-switch
-              :modelValue="data.status"
-              :active-value="1"
-              :inactive-value="0"
-              @change="handleStatusChange($event, data)"
-            />
+            <span @click.stop="() => {}">
+              <el-switch
+                :modelValue="data.status"
+                :active-value="1"
+                :inactive-value="0"
+                @change="handleStatusChange($event, data)"
+              />
+            </span>
             <el-button
               text
               type="primary"
