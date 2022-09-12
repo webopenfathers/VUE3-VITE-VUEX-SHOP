@@ -148,9 +148,21 @@ export function useInitForm(opt = {}) {
             if (!valid) return;
 
             formDrawerRef.value.showLoading();
+
+
+            let body = {}
+            if (opt.beforeSubmit && typeof opt.beforeSubmit == 'function') {
+                body = opt.beforeSubmit({
+                    ...form
+                })
+            } else {
+                body = form
+            }
+
+
             const fun = editId.value
-                ? opt.update(editId.value, form)
-                : opt.create(form);
+                ? opt.update(editId.value, body)
+                : opt.create(body);
             // 创建
             fun
                 .then((res) => {
@@ -166,6 +178,7 @@ export function useInitForm(opt = {}) {
     };
     // 重置表单
     function resetForm(row) {
+        console.log(row);
         if (formRef.value) formRef.value.clearValidate();
         for (const key in defaultForm) {
             form[key] = row[key];
