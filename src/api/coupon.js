@@ -16,8 +16,10 @@ export function deleteCoupon(id) {
     return axios.post(`/admin/coupon/${id}/delete`)
 }
 
-export function updateCouponStatus(id) {
+
+// 优惠券失效接口
+export function updateCouponStatus(id, status) {
     return axios.post(`/admin/coupon/${id}/update_status`, {
-        status: 0
+        status
     })
 }

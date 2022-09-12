@@ -27,17 +27,34 @@
       <el-table-column prop="used" label="已使用数量" />
       <el-table-column label="操作" width="180" align="center">
         <template v-slot="{ row }">
-          <el-button type="primary" size="small" text @click="handleEdit(row)"
+          <el-button
+            v-if="row.statusText == '未开始'"
+            type="primary"
+            size="small"
+            text
+            @click="handleEdit(row)"
             >修改</el-button
           >
           <el-popconfirm
-            title="是否要删除该公告?"
+            v-if="row.statusText != '领取中'"
+            title="是否要删除该优惠券?"
             confirm-button-text="确认"
             cancel-button-text="取消"
             @confirm="handleDelete(row.id)"
           >
             <template #reference>
               <el-button text type="primary" size="small"> 删除 </el-button>
+            </template>
+          </el-popconfirm>
+          <el-popconfirm
+            v-if="row.statusText === '领取中'"
+            title="是否要让该优惠券失效?"
+            confirm-button-text="失效"
+            cancel-button-text="取消"
+            @confirm="handleStatusChange(0, row)"
+          >
+            <template #reference>
+              <el-button type="danger" size="small"> 失效 </el-button>
             </template>
           </el-popconfirm>
         </template>
@@ -153,20 +170,29 @@ function formatStatus(row) {
   return s;
 }
 
-const { tableData, loading, currentPage, total, limit, getData, handleDelete } =
-  useInitTable({
-    getList: getCouponList,
-    onGetListSuccess: (res) => {
-      tableData.value = res.list.map((o) => {
-        // 转化优惠券状态
-        o.statusText = formatStatus(o);
+const {
+  tableData,
+  loading,
+  currentPage,
+  total,
+  limit,
+  getData,
+  handleDelete,
+  handleStatusChange,
+} = useInitTable({
+  getList: getCouponList,
+  onGetListSuccess: (res) => {
+    tableData.value = res.list.map((o) => {
+      // 转化优惠券状态
+      o.statusText = formatStatus(o);
 
-        return o;
-      });
-      total.value = res.totalCount;
-    },
-    delete: deleteCoupon,
-  });
+      return o;
+    });
+    total.value = res.totalCount;
+  },
+  delete: deleteCoupon,
+  updateStatus: updateCouponStatus,
+});
 
 const {
   formDrawerRef,
