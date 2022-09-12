@@ -7,7 +7,10 @@
     <el-table :data="tableData" stripe style="width: 100%" v-loading="loading">
       <el-table-column label="优惠券名称" width="350px">
         <template v-slot="{ row }">
-          <div class="border border-dashed py-2 px-4 rounded">
+          <div
+            class="border border-dashed py-2 px-4 rounded"
+            :class="row.statusText == '领取中' ? 'active' : 'inactive'"
+          >
             <h5 class="font-bold text-md">{{ row.name }}</h5>
             <small>{{ row.start_time }} ~ {{ row.end_time }}</small>
           </div>
@@ -90,9 +93,34 @@ import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
+function formatStatus(row) {
+  let s = "领取中";
+  let start_time = new Date(row.start_time).getTime();
+  let now = new Date().getTime();
+  let end_time = new Date(row.end_time).getTime();
+  if (start_time > now) {
+    s = "未开始";
+  } else if (end_time < now) {
+    s = "已结束";
+  } else if (row.status === 0) {
+    s = "已失效";
+  }
+
+  return s;
+}
+
 const { tableData, loading, currentPage, total, limit, getData, handleDelete } =
   useInitTable({
     getList: getCouponList,
+    onGetListSuccess: (res) => {
+      tableData.value = res.list.map((o) => {
+        // 转化优惠券状态
+        o.statusText = formatStatus(o);
+
+        return o;
+      });
+      total.value = res.totalCount;
+    },
     delete: deleteCoupon,
   });
 
@@ -119,3 +147,12 @@ const {
   create: createCoupon,
 });
 </script>
+<style scoped>
+.active {
+  @apply border-rose-200 bg-rose-50 text-red-400;
+}
+
+.inactive {
+  @apply border-gray-200 bg-gray-50 text-gray-400;
+}
+</style>
