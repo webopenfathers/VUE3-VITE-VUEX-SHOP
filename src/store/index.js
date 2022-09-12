@@ -57,6 +57,8 @@ const store = createStore({
             removeToken()
             // 清除当前用户状态 vuex
             commit('SET_USERINFO', {})
+            commit('SET_MENUS', [])
+            commit('SET_RULENAMES', [])
         }
     }
 })
