@@ -1,14 +1,11 @@
 import axios from '@/axios'
-import Qs from 'qs'
+import { queryParams } from '@/utils/util'
 
 
 // 商品列表
-export function getGoodsList(page, data) {
-    for (const key in data) {
-        if (data[key] === '') delete data[key]
-    }
-    return axios.get(`/admin/goods/${page}?${Qs.stringify(data)
-        }`)
+export function getGoodsList(page, query = {}) {
+    let r = queryParams(query)
+    return axios.get(`/admin/goods/${page}${r}`)
 }
 
 
