@@ -10,6 +10,9 @@ router.beforeEach(async (to, from, next) => {
     // 显示顶部加载进度条
     showFullLoading()
 
+    if (to.path === '/login') {
+        hasGetInfo = false
+    }
     const token = getToken()
     // 没有登录强制跳转登录页
     if (!token && to.path !== '/login') {

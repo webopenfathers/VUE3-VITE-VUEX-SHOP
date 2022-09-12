@@ -95,9 +95,6 @@ const onSubmit = () => {
         toast("登陆成功");
         // 跳转后台首页
         router.push("/");
-        setTimeout(() => {
-          store.dispatch("getInfo");
-        });
       })
       .finally(() => {
         loading.value = false;
