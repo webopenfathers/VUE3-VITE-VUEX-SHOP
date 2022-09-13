@@ -22,10 +22,34 @@
               ></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8" :offset="8">
+          <el-col :span="8" :offset="0" v-if="showSearch">
+            <el-form-item label="商品分类" prop="category_id">
+              <el-select
+                v-model="searchForm.category_id"
+                placeholder="请选择商品分类"
+                clearable
+              >
+                <el-option
+                  v-for="item in category_list"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id"
+                >
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="8" :offset="showSearch ? 0 : 8">
             <div class="flex items-center justify-end">
               <el-button type="primary" @click="getData">搜索</el-button>
               <el-button @click="resetSearchForm">重置</el-button>
+              <el-button type="primary" text @click="showSearch = !showSearch"
+                >{{ showSearch ? "收起" : "展开" }}
+                <el-icon>
+                  <ArrowUp v-if="showSearch" />
+                  <ArrowDown v-else />
+                </el-icon>
+              </el-button>
             </div>
           </el-col>
         </el-row>
@@ -211,6 +235,7 @@ import {
   updateGoods,
   deleteGoods,
 } from "@/api/goods.js";
+import { getCategoryList } from "@/api/category";
 import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
 import ChooseImage from "@/components/ChooseImage.vue";
@@ -304,4 +329,13 @@ const tabbars = [
     name: "回收站",
   },
 ];
+
+// 商品分类
+const category_list = ref([]);
+getCategoryList().then((res) => {
+  category_list.value = res;
+});
+
+// 收起/展开
+const showSearch = ref(false);
 </script>
