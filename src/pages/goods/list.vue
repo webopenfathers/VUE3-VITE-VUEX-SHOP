@@ -81,7 +81,12 @@
             }}</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态" align="center" width="180px">
+        <el-table-column
+          label="审核状态"
+          align="center"
+          width="180px"
+          v-if="searchForm.tab != 'delete'"
+        >
           <template v-slot="{ row }">
             <div class="flex flex-col" v-if="row.ischeck == 0">
               <el-button type="success" size="small" plain>审核通过</el-button>
@@ -100,7 +105,7 @@
         />
         <el-table-column label="操作" align="center">
           <template v-slot="{ row }">
-            <div>
+            <div v-if="searchForm.tab != 'delete'">
               <el-button
                 class="px-1"
                 type="primary"
@@ -129,6 +134,7 @@
                 </template>
               </el-popconfirm>
             </div>
+            <span v-else>暂无操作</span>
           </template>
         </el-table-column>
       </el-table>
