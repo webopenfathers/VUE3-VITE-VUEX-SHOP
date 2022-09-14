@@ -105,6 +105,22 @@ export function useInitTable(opt = {}) {
             });
     };
 
+    // 批量修改状态
+    const handleMultiStatusChange = (status) => {
+        loading.value = true;
+        opt.updateStatus(multiSelectionIds.value, status)
+            .then((res) => {
+                toast("修改状态成功");
+                // 清空选中
+                if (multipleTableRef.value) {
+                    multipleTableRef.value.clearSelection();
+                }
+                getData();
+            })
+            .finally(() => {
+                loading.value = false;
+            });
+    };
 
 
 
@@ -124,7 +140,8 @@ export function useInitTable(opt = {}) {
         handleStatusChange,
         handleSelectionChange,
         multipleTableRef,
-        handleMultiDelete
+        handleMultiDelete,
+        handleMultiStatusChange
     }
 }
 
