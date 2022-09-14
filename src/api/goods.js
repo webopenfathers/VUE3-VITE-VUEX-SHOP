@@ -34,3 +34,13 @@ export function deleteGoods(ids) {
 }
 
 
+// 查看商品资料---获取轮播图
+export function readGoods(id) {
+    return axios.get(`/admin/goods/read/${id}`)
+}
+
+
+// 设置商品轮播图
+export function setGoodsBanner(id, data) {
+    return axios.post(`/admin/goods/banners/${id}`, data)
+}
