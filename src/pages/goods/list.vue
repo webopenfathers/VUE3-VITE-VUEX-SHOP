@@ -148,10 +148,11 @@
               >
               <el-button
                 class="px-1"
-                type="primary"
+                :type="row.goods_banner.length ? 'primary' : 'danger'"
                 size="small"
                 text
                 @click="handleSetGoodsBanners(row)"
+                :loading="row.bannersLoading"
                 >设置轮播图</el-button
               >
               <el-button class="px-1" type="primary" size="small" text
@@ -272,7 +273,7 @@
       </FormDrawer>
     </el-card>
 
-    <banners ref="bannersRef" />
+    <banners ref="bannersRef" @reloadData="getData" />
   </div>
 </template>
 <script setup>
@@ -317,7 +318,7 @@ const {
   onGetListSuccess: (res) => {
     // 使用map的原因给每个对象添加一个loading状态;
     tableData.value = res.list.map((o) => {
-      o.statusLoading = false;
+      o.bannersLoading = false;
       return o;
     });
     total.value = res.totalCount;
