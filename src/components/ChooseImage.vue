@@ -1,5 +1,5 @@
 <template>
-  <div v-if="modelValue">
+  <div v-if="modelValue && preview">
     <el-image
       v-if="typeof modelValue == 'string'"
       :src="modelValue"
@@ -33,7 +33,8 @@
       </div>
     </div>
   </div>
-  <div class="choose-image-btn" @click="open">
+
+  <div v-if="preview" class="choose-image-btn" @click="open">
     <el-icon :size="25" class="text-gray-500"><Plus /></el-icon>
   </div>
   <el-dialog title="选择图片" v-model="dialogVisible" width="80%" top="5vh">
@@ -69,9 +70,12 @@ import { ref } from "@vue/reactivity";
 import ImageAside from "@/components/ImageAside.vue";
 import ImageMain from "@/components/ImageMain.vue";
 import { toast } from "@/utils/util";
+import { buildLocaleContext } from "element-plus";
 const dialogVisible = ref(false);
 
-const open = () => {
+const callbackFunction = ref(null);
+const open = (callback = null) => {
+  callbackFunction.value = callback;
   dialogVisible.value = true;
 };
 
@@ -99,6 +103,10 @@ const props = defineProps({
     type: Number,
     default: 1,
   },
+  preview: {
+    type: Boolean,
+    default: true,
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -113,13 +121,19 @@ const submit = () => {
   if (props.limit === 1) {
     value = urls[0];
   } else {
-    value = [...props.modelValue, ...urls];
+    value = props.preview ? [...props.modelValue, ...urls] : [...urls];
     if (value.length > props.limit) {
-      return toast(`最多还能选择${props.limit - props.modelValue.length}张`);
+      let limit = props.preview
+        ? props.limit - props.modelValue.length
+        : props.limit;
+      return toast(`最多还能选择${limit}张`);
     }
   }
-  if (value) {
+  if (value && props.preview) {
     emit("update:modelValue", value);
+  }
+  if (!props.preview && typeof callbackFunction.value == "function") {
+    callbackFunction.value(value);
   }
   close();
 };
@@ -130,6 +144,10 @@ const removeImage = (url) => {
     props.modelValue.filter((u) => u != url)
   );
 };
+
+defineExpose({
+  open,
+});
 </script>
 
 <style scoped>

@@ -1,9 +1,11 @@
 <template>
   <editor v-model="content" tag-name="div" :init="init" />
+  <ChooseImage :preview="false" ref="ChooseImageRef" :limit="9" />
 </template>
 <script setup>
 import tinymce from "tinymce/tinymce";
 import Editor from "@tinymce/tinymce-vue";
+import ChooseImage from "./ChooseImage.vue";
 import { ref, watch } from "vue";
 import "tinymce/themes/silver/theme"; // 引用主题文件
 import "tinymce/icons/default"; // 引用图标文件
@@ -44,6 +46,7 @@ const props = defineProps({
   modelValue: String,
 });
 const emit = defineEmits(["update:modelValue"]);
+const ChooseImageRef = ref(null);
 // 配置
 const init = {
   language_url: "/tinymce/langs/zh-Hans.js", // 中文语言包路径
@@ -58,7 +61,7 @@ const init = {
   plugins:
     "wordcount visualchars visualblocks template searchreplace save quickbars preview pagebreak nonbreaking media insertdatetime importcss image help fullscreen directionality codesample code charmap link code table lists advlist anchor autolink autoresize autosave",
   toolbar:
-    "formats undo redo fontsizeselect fontselect ltr rtl searchreplace media | outdent indent aligncenter alignleft alignright alignjustify lineheight underline quicklink h2 h3 blockquote numlist bullist table removeformat forecolor backcolor bold italic strikethrough hr link preview fullscreen help ",
+    "formats undo redo fontsizeselect fontselect ltr rtl searchreplace media imageUpload | outdent indent aligncenter alignleft alignright alignjustify lineheight underline quicklink h2 h3 blockquote numlist bullist table removeformat forecolor backcolor bold italic strikethrough hr link preview fullscreen help ",
   content_style: "p {margin: 5px 0; font-size: 14px}",
   fontsize_formats: "12px 14px 16px 18px 24px 36px 48px 56px 72px",
   font_formats:
@@ -67,6 +70,22 @@ const init = {
   elementpath: false,
   resize: false, // 禁止改变大小
   statusbar: false, // 隐藏底部状态栏
+  setup: (editor) => {
+    console.log(editor);
+    editor.ui.registry.addButton("imageUpload", {
+      tooltip: "插入图片",
+      icon: "image",
+      onAction() {
+        ChooseImageRef.value.open((data) => {
+          console.log(data);
+          data.forEach((url) => {
+            editor.insertContent(`<img src=${url}  style="width:100%" />`);
+          });
+        });
+        // console.log("插入图片");
+      },
+    });
+  },
 };
 tinymce.init; // 初始化
 const content = ref(props.modelValue);
