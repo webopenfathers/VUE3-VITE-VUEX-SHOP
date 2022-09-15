@@ -34,11 +34,11 @@ const open = (row) => {
   readGoods(goodsId.value)
     .then((res) => {
       form.banners = res.goodsBanner.map((o) => o.url);
+      dialogVisible.value = true;
     })
     .finally(() => {
       row.bannersLoading = false;
     });
-  dialogVisible.value = true;
 };
 
 const emit = defineEmits(["reloadData"]);

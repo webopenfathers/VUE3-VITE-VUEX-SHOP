@@ -155,7 +155,13 @@
                 :loading="row.bannersLoading"
                 >设置轮播图</el-button
               >
-              <el-button class="px-1" type="primary" size="small" text
+              <el-button
+                class="px-1"
+                size="small"
+                text
+                :type="row.content ? 'primary' : 'danger'"
+                @click="handleSetGoodsContent(row)"
+                :loading="row.contentLoading"
                 >商品详情</el-button
               >
               <el-popconfirm
@@ -274,6 +280,8 @@
     </el-card>
 
     <banners ref="bannersRef" @reloadData="getData" />
+
+    <content ref="contentRef" @reloadData="getData" />
   </div>
 </template>
 <script setup>
@@ -292,6 +300,7 @@ import ChooseImage from "@/components/ChooseImage.vue";
 import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import banners from "./banners.vue";
+import content from "./content.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
 const {
@@ -319,6 +328,7 @@ const {
     // 使用map的原因给每个对象添加一个loading状态;
     tableData.value = res.list.map((o) => {
       o.bannersLoading = false;
+      o.contentLoading = false;
       return o;
     });
     total.value = res.totalCount;
@@ -396,8 +406,13 @@ getCategoryList().then((res) => {
 
 // 设置轮播图相关
 const bannersRef = ref(null);
-
 const handleSetGoodsBanners = (row) => {
   bannersRef.value.open(row);
+};
+
+// 设置富文本(商品详情)相关
+const contentRef = ref(null);
+const handleSetGoodsContent = (row) => {
+  contentRef.value.open(row);
 };
 </script>
