@@ -48,7 +48,12 @@
       </el-header>
       <el-container>
         <ImageAside ref="ImageAsideRef" @change="handleAsideChange" />
-        <ImageMain openChoose ref="ImageMainRef" @choose="handleChoose" />
+        <ImageMain
+          :limit="limit"
+          openChoose
+          ref="ImageMainRef"
+          @choose="handleChoose"
+        />
       </el-container>
     </el-container>
     <template #footer>
@@ -63,6 +68,7 @@
 import { ref } from "@vue/reactivity";
 import ImageAside from "@/components/ImageAside.vue";
 import ImageMain from "@/components/ImageMain.vue";
+import { toast } from "@/utils/util";
 const dialogVisible = ref(false);
 
 const open = () => {
@@ -89,6 +95,10 @@ const handleOpenUpload = () => {
 
 const props = defineProps({
   modelValue: [String, Array],
+  limit: {
+    type: Number,
+    default: 1,
+  },
 });
 
 const emit = defineEmits(["update:modelValue"]);
@@ -99,8 +109,17 @@ const handleChoose = (e) => {
 };
 
 const submit = () => {
-  if (urls.length) {
-    emit("update:modelValue", urls[0]);
+  let value = [];
+  if (props.limit === 1) {
+    value = urls[0];
+  } else {
+    value = [...props.modelValue, ...urls];
+    if (value.length > props.limit) {
+      return toast(`最多还能选择${props.limit - props.modelValue.length}张`);
+    }
+  }
+  if (value) {
+    emit("update:modelValue", value);
   }
   close();
 };
