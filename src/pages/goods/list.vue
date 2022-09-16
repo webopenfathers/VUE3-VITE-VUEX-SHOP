@@ -143,7 +143,13 @@
                 @click="handleEdit(row)"
                 >修改</el-button
               >
-              <el-button class="px-1" type="primary" size="small" text
+              <el-button
+                class="px-1"
+                type="primary"
+                size="small"
+                text
+                @click="handleSetGoodsSkus(row)"
+                :loading="row.skusLoading"
                 >商品规格</el-button
               >
               <el-button
@@ -282,6 +288,8 @@
     <banners ref="bannersRef" @reloadData="getData" />
 
     <content ref="contentRef" @reloadData="getData" />
+
+    <skus ref="skusRef" @reloadData="getData" />
   </div>
 </template>
 <script setup>
@@ -301,6 +309,7 @@ import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import banners from "./banners.vue";
 import content from "./content.vue";
+import skus from "./skus.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
 
 const {
@@ -329,6 +338,7 @@ const {
     tableData.value = res.list.map((o) => {
       o.bannersLoading = false;
       o.contentLoading = false;
+      o.skusLoading = false;
       return o;
     });
     total.value = res.totalCount;
@@ -414,5 +424,11 @@ const handleSetGoodsBanners = (row) => {
 const contentRef = ref(null);
 const handleSetGoodsContent = (row) => {
   contentRef.value.open(row);
+};
+
+// 设置商品规格
+const skusRef = ref(null);
+const handleSetGoodsSkus = (row) => {
+  skusRef.value.open(row);
 };
 </script>
