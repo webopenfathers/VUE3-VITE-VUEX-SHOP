@@ -62,3 +62,24 @@ export function queryParams(query) {
     return r
 }
 
+
+// 数组上移
+// arr 当前操作的数组
+// index 当前操作的索引
+export function useArrayMoveUp(arr, index) {
+    swapArray(arr, index, index - 1)
+}
+
+
+// 数组下移
+export function useArrayMoveDown(arr, index) {
+    swapArray(arr, index, index + 1)
+}
+
+
+// 调换数组索引的方法
+function swapArray(arr, index1, index2) {
+    // 交换数组中两个相邻元素的位置
+    arr[index1] = arr.splice(index2, 1, arr[index1])[0]
+    return arr
+}

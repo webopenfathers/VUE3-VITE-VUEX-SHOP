@@ -1,6 +1,8 @@
 import { ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard } from '@/api/goods.js'
+import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard } from '@/api/goods.js'
 import { toast } from '@/utils/util'
+
+import { useArrayMoveUp, useArrayMoveDown } from '@/utils/util'
 // 当前商品的ID
 export const goodsId = ref(0)
 
@@ -60,6 +62,30 @@ export function handleUpdate(item) {
         item.loading = false
     })
 
+}
+
+
+
+// 删除规格选项
+export function handleDelete(item) {
+    item.loading = true
+    deleteGoodsSkusCard(item.id).then(res => {
+        const i = sku_card_list.value.findIndex(o => o.id == item.id)
+        if (i != -1) {
+            sku_card_list.value.splice(i, 1)
+        }
+        toast('删除规格选项成功')
+    })
+}
+
+
+// 排序规格选项
+export function sortCard(action, index) {
+    if (action === 'up') {
+        useArrayMoveUp(sku_card_list.value, index)
+    } else {
+        useArrayMoveDown(sku_card_list.value, index)
+    }
 }
 
 
