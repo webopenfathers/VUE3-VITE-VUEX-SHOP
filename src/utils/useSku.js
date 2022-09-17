@@ -1,7 +1,7 @@
 import { ref } from 'vue'
 import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard } from '@/api/goods.js'
 import { toast } from '@/utils/util'
-
+import { nextTick } from "vue";
 import { useArrayMoveUp, useArrayMoveDown } from '@/utils/util'
 // 当前商品的ID
 export const goodsId = ref(0)
@@ -110,8 +110,40 @@ export function sortCard(action, index) {
 export function initSkusCardItem(id) {
     // 对象
     const item = sku_card_list.value.find(o => o.id === id)
-    console.log(item);
+
+
+    const inputValue = ref("");
+    const dynamicTags = ref(["Tag 1", "Tag 2", "Tag 3"]);
+    const inputVisible = ref(false);
+    const InputRef = ref();
+
+    const handleClose = (tag) => {
+        dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
+    };
+
+    const showInput = () => {
+        inputVisible.value = true;
+        nextTick(() => {
+            InputRef.value.input.focus();
+        });
+    };
+
+    const handleInputConfirm = () => {
+        if (inputValue.value) {
+            dynamicTags.value.push(inputValue.value);
+        }
+        inputVisible.value = false;
+        inputValue.value = "";
+    };
+
+
     return {
-        item
+        item,
+        inputValue,
+        inputVisible,
+        InputRef,
+        handleClose,
+        showInput,
+        handleInputConfirm
     }
 }
