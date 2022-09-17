@@ -56,3 +56,9 @@ export function updateGoodsSkus(id, data) {
 export function createGoodsSkusCard(data) {
     return axios.post(`/admin/goods_skus_card`, data)
 }
+
+
+// 修改商品规格选项
+export function updateGoodsSkusCard(id, data) {
+    return axios.post(`/admin/goods_skus_card/${id}`, data)
+}

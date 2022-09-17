@@ -1,5 +1,6 @@
 import { ref } from 'vue'
-import { createGoodsSkusCard } from '@/api/goods.js'
+import { createGoodsSkusCard, updateGoodsSkusCard } from '@/api/goods.js'
+import { toast } from '@/utils/util'
 // 当前商品的ID
 export const goodsId = ref(0)
 
@@ -32,14 +33,36 @@ export function addSkuCardEvent() {
         order: 50,
         type: 0
     }).then(res => {
+        toast('添加规格成功')
         sku_card_list.value.push({
             ...res, text: res.name, loading: false, goodsSkusCardValue: []
         })
-
     }).finally(() => {
         btnLoading.value = false
     })
 }
+
+
+// 修改规格选项
+export function handleUpdate(item) {
+    item.loading = true
+    updateGoodsSkusCard(item.id, {
+        goods_id: item.goods_id,
+        name: item.text,
+        order: item.order,
+        type: 0
+    }).then(res => {
+        toast('修改商品规格成功')
+        item.name = item.text
+    }).catch(err => {
+        item.text = item.name
+    }).finally(() => {
+        item.loading = false
+    })
+
+}
+
+
 
 
 // 初始化规格值

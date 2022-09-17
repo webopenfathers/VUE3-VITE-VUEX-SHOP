@@ -3,6 +3,7 @@
     <el-card
       shadow="never"
       class="w-full mb-3"
+      v-loading="item.loading"
       v-for="(item, index) in sku_card_list"
       :key="item.id"
     >
@@ -12,6 +13,7 @@
             v-model="item.text"
             placeholder="规格名称"
             style="width: 200px"
+            @change="handleUpdate(item)"
           >
             <template #append>
               <el-icon><more /></el-icon>
@@ -42,7 +44,12 @@
 </template>
 <script setup>
 import SkuCardItem from "./SkuCardItem.vue";
-import { sku_card_list, addSkuCardEvent, btnLoading } from "@/utils/useSku.js";
+import {
+  sku_card_list,
+  addSkuCardEvent,
+  btnLoading,
+  handleUpdate,
+} from "@/utils/useSku.js";
 </script>
 <style scoped>
 :deep(.el-card__header) {
