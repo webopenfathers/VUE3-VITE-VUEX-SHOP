@@ -80,3 +80,9 @@ export function sortGoodsSkusCard(data) {
 export function createGoodsSkusCardValue(data) {
     return axios.post(`/admin/goods_skus_card_value`, data)
 }
+
+
+// 修改商品规格值
+export function updateGoodsSkusCardValue(id, data) {
+    return axios.post(`/admin/goods_skus_card_value/${id}`, data)
+}

@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard, createGoodsSkusCardValue } from '@/api/goods.js'
+import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard, createGoodsSkusCardValue, updateGoodsSkusCardValue } from '@/api/goods.js'
 import { toast } from '@/utils/util'
 import { nextTick } from "vue";
 import { useArrayMoveUp, useArrayMoveDown } from '@/utils/util'
@@ -129,6 +129,7 @@ export function initSkusCardItem(id) {
     };
 
 
+    // 添加商品规格值
     const loading = ref(false)
     const handleInputConfirm = () => {
         if (!inputValue.value) {
@@ -157,6 +158,25 @@ export function initSkusCardItem(id) {
     };
 
 
+    // 修改商品规格值
+    const handleChange = (value, tag) => {
+        loading.value = true
+        updateGoodsSkusCardValue(tag.id, {
+            goods_skus_card_id: id,
+            name: item.name,
+            order: tag.order,
+            value: value
+        }).then(res => {
+            tag.value = value
+            toast('修改商品规格选项值成功')
+        }).catch(err => {
+            tag.text = tag.value
+        }).finally(() => {
+            loading.value = false
+        })
+    }
+
+
     return {
         item,
         inputValue,
@@ -165,6 +185,7 @@ export function initSkusCardItem(id) {
         handleClose,
         showInput,
         handleInputConfirm,
-        loading
+        loading,
+        handleChange
     }
 }
