@@ -148,6 +148,12 @@
                 type="primary"
                 size="small"
                 text
+                :type="
+                  (row.sku_type == 0 && !row.sku_value) ||
+                  (row.sku_type === 1 && !row.goods_skus.length)
+                    ? 'danger'
+                    : 'primary'
+                "
                 @click="handleSetGoodsSkus(row)"
                 :loading="row.skusLoading"
                 >商品规格</el-button
