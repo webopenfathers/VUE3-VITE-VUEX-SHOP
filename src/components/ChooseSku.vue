@@ -61,13 +61,17 @@ const { loading, currentPage, limit, total, tableData, getData } = useInitTable(
     },
   }
 );
-const open = () => {
+
+const callBackFunction = ref(null);
+const open = (callBack = null) => {
+  callBackFunction.value = callBack;
   getData(1);
   dialogVisible.value = true;
 };
 
 const list = ref([]);
 const form = reactive({
+  name: "",
   list: [],
 });
 
@@ -77,10 +81,16 @@ function handleChangeActiveId(id) {
   let item = tableData.value.find((o) => o.id === id);
   if (item) {
     list.value = item.default.split(",");
+    form.name = item.name;
   }
 }
 
-const submit = () => {};
+const submit = () => {
+  if (typeof callBackFunction.value === "function") {
+    callBackFunction.value(form);
+  }
+  dialogVisible.value = false;
+};
 
 defineExpose({
   open,

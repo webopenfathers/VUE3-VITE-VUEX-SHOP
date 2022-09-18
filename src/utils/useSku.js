@@ -6,7 +6,8 @@ import {
     sortGoodsSkusCard,
     createGoodsSkusCardValue,
     updateGoodsSkusCardValue,
-    deleteGoodsSkusCardValue
+    deleteGoodsSkusCardValue,
+    chooseAndSetGoodsSkusCard
 } from '@/api/goods.js'
 import { toast } from '@/utils/util'
 import { nextTick } from "vue";
@@ -110,6 +111,25 @@ export function sortCard(action, index) {
         bodyLoading.value = false
     })
 }
+
+
+
+// 选择设置规格选项名称和值
+export function handleChooseSetGoodsSkusCard(id, data) {
+    let item = sku_card_list.value.find(o => o.id == id)
+    item.loading = true
+    chooseAndSetGoodsSkusCard(id, data).then(res => {
+        item.name = item.text = res.goods_skus_card.name
+        item.goodsSkusCardValue = res.goods_skus_card_value.map(o => {
+            o.text = o.value
+            return o
+        })
+
+    }).finally(() => {
+        item.loading = false
+    })
+}
+
 
 
 
