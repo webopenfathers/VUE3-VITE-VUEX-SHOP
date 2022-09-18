@@ -16,7 +16,9 @@
             @change="handleUpdate(item)"
           >
             <template #append>
-              <el-icon><more /></el-icon>
+              <el-icon class="cursor-pointer" @click="handleChooseSku(item)"
+                ><more
+              /></el-icon>
             </template>
           </el-input>
           <el-button
@@ -59,9 +61,12 @@
       >添加规格</el-button
     >
   </el-form-item>
+  <!-- 选择规格选项值弹框 -->
+  <ChooseSku ref="ChooseSkuRef" />
 </template>
 <script setup>
 import SkuCardItem from "./SkuCardItem.vue";
+import ChooseSku from "@/components/ChooseSku.vue";
 import {
   sku_card_list,
   addSkuCardEvent,
@@ -71,6 +76,13 @@ import {
   sortCard,
   bodyLoading,
 } from "@/utils/useSku.js";
+import { ref } from "@vue/reactivity";
+
+const ChooseSkuRef = ref(null);
+
+const handleChooseSku = (item) => {
+  ChooseSkuRef.value.open();
+};
 </script>
 <style scoped>
 :deep(.el-card__header) {
