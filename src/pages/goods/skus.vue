@@ -42,6 +42,7 @@
       </template>
       <template v-else>
         <SkuCard />
+        <SkuTable />
       </template>
     </el-form>
   </FormDrawer>
@@ -50,6 +51,7 @@
 import { reactive, ref } from "vue";
 import FormDrawer from "@/components/FormDrawer.vue";
 import SkuCard from "./components/SkuCard.vue";
+import SkuTable from "./components/SkuTable.vue";
 import { goodsId, initSkuCardList } from "@/utils/useSku.js";
 import { readGoods, updateGoodsSkus } from "@/api/goods";
 import { toast } from "@/utils/util";
