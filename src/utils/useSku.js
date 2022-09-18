@@ -1,5 +1,13 @@
 import { ref } from 'vue'
-import { createGoodsSkusCard, updateGoodsSkusCard, deleteGoodsSkusCard, sortGoodsSkusCard, createGoodsSkusCardValue, updateGoodsSkusCardValue } from '@/api/goods.js'
+import {
+    createGoodsSkusCard,
+    updateGoodsSkusCard,
+    deleteGoodsSkusCard,
+    sortGoodsSkusCard,
+    createGoodsSkusCardValue,
+    updateGoodsSkusCardValue,
+    deleteGoodsSkusCardValue
+} from '@/api/goods.js'
 import { toast } from '@/utils/util'
 import { nextTick } from "vue";
 import { useArrayMoveUp, useArrayMoveDown } from '@/utils/util'
@@ -111,14 +119,24 @@ export function initSkusCardItem(id) {
     // 对象
     const item = sku_card_list.value.find(o => o.id === id)
 
-
+    const loading = ref(false)
     const inputValue = ref("");
-    const dynamicTags = ref(["Tag 1", "Tag 2", "Tag 3"]);
     const inputVisible = ref(false);
     const InputRef = ref();
 
+
+    // 删除规格选项值
     const handleClose = (tag) => {
-        dynamicTags.value.splice(dynamicTags.value.indexOf(tag), 1);
+        loading.value = true
+        deleteGoodsSkusCardValue(tag.id).then(res => {
+            let i = item.goodsSkusCardValue.findIndex(o => o.id == tag.id)
+            if (i !== -1) {
+                item.goodsSkusCardValue.splice(i, 1)
+            }
+            toast('删除规格选项值成功')
+        }).finally(() => {
+            loading.value = false
+        })
     };
 
     const showInput = () => {
@@ -130,7 +148,7 @@ export function initSkusCardItem(id) {
 
 
     // 添加商品规格值
-    const loading = ref(false)
+
     const handleInputConfirm = () => {
         if (!inputValue.value) {
             inputVisible.value = false;

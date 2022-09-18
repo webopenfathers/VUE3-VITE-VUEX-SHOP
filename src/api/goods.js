@@ -86,3 +86,11 @@ export function createGoodsSkusCardValue(data) {
 export function updateGoodsSkusCardValue(id, data) {
     return axios.post(`/admin/goods_skus_card_value/${id}`, data)
 }
+
+
+
+
+// 删除商品规格值
+export function deleteGoodsSkusCardValue(id) {
+    return axios.post(`/admin/goods_skus_card_value/${id}/delete`)
+}
