@@ -15,7 +15,13 @@
 
           <!--右边部分 -->
           <div class="ml-auto">
-            <el-button text type="primary" size="small">推荐商品</el-button>
+            <el-button
+              text
+              type="primary"
+              size="small"
+              @click="openGoodsDrawer(data)"
+              >推荐商品</el-button
+            >
             <span @click.stop="() => {}">
               <el-switch
                 :modelValue="data.status"
@@ -62,11 +68,14 @@
         </el-form-item>
       </el-form>
     </FormDrawer>
+
+    <GoodsDrawer ref="GoodsDrawerRef" />
   </el-card>
 </template>
 <script setup>
 import ListHeader from "@/components/ListHeader.vue";
 import FormDrawer from "@/components/FormDrawer.vue";
+import GoodsDrawer from "./components/GoodsDrawer.vue";
 import {
   getCategoryList,
   createCategory,
@@ -75,6 +84,7 @@ import {
   deleteCategory,
 } from "@/api/category.js";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
+import { ref } from "@vue/reactivity";
 
 const { loading, tableData, getData, handleDelete, handleStatusChange } =
   useInitTable({
@@ -104,6 +114,12 @@ const {
   update: updateCategory,
   create: createCategory,
 });
+
+const GoodsDrawerRef = ref(null);
+
+const openGoodsDrawer = (data) => {
+  GoodsDrawerRef.value.open(data);
+};
 </script>
 <style scoped>
 .custom-tree-node {

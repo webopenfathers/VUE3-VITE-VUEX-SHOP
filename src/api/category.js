@@ -28,3 +28,9 @@ export function updateCategoryStatus(id, status) {
 export function deleteCategory(id) {
     return axios.post(`/admin/category/${id}/delete`)
 }
+
+
+// 关联商品分类列表
+export function getCategoryGoods(id) {
+    return axios.get(`/admin/app_category_item/list?category_id=${id}`)
+}
