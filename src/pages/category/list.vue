@@ -20,6 +20,7 @@
               type="primary"
               size="small"
               @click="openGoodsDrawer(data)"
+              :loading="data.GoodsDrawerLoading"
               >推荐商品</el-button
             >
             <span @click.stop="() => {}">
@@ -90,7 +91,10 @@ const { loading, tableData, getData, handleDelete, handleStatusChange } =
   useInitTable({
     getList: getCategoryList,
     onGetListSuccess: (res) => {
-      tableData.value = res;
+      tableData.value = res.map((o) => {
+        o.GoodsDrawerLoading = false;
+        return o;
+      });
     },
     delete: deleteCategory,
     updateStatus: updateCategoryStatus,

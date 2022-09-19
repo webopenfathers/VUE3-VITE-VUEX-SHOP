@@ -1,5 +1,5 @@
 <template>
-  <FormDrawer ref="formDrawerRef" title="推荐商品">
+  <FormDrawer ref="formDrawerRef" :title="formDrawerTitle">
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column prop="goods_id" align="center" label="ID" width="60" />
       <el-table-column align="center" label="商品封面" width="180">
@@ -20,7 +20,23 @@
       />
       <el-table-column label="操作" align="center">
         <template v-slot="{ row }">
-          <el-button type="primary" text size="small">删除</el-button>
+          <el-popconfirm
+            title="是否要删除该记录?"
+            confirm-button-text="确认"
+            cancel-button-text="取消"
+            @confirm="handleDelete(row)"
+          >
+            <template #reference>
+              <el-button
+                text
+                type="primary"
+                size="small"
+                :loading="row.loading"
+              >
+                删除
+              </el-button>
+            </template>
+          </el-popconfirm>
         </template>
       </el-table-column>
     </el-table>
@@ -30,23 +46,42 @@
 import { ref } from "vue";
 import FormDrawer from "@/components/FormDrawer.vue";
 
-import { getCategoryGoods } from "@/api/category.js";
+import { getCategoryGoods, deleteCategoryGoods } from "@/api/category.js";
+import { toast } from "@/utils/util";
 
 const formDrawerRef = ref(null);
 const category_id = ref(0);
 const tableData = ref([]);
+const formDrawerTitle = ref(null);
 const open = (item) => {
+  formDrawerTitle.value = item.name;
   category_id.value = item.id;
-  getData().then((res) => {
-    formDrawerRef.value.open();
-  });
+  item.GoodsDrawerLoading = true;
+  getData()
+    .then((res) => {
+      formDrawerRef.value.open();
+    })
+    .finally(() => {
+      item.GoodsDrawerLoading = false;
+    });
 };
 
 function getData() {
   return getCategoryGoods(category_id.value).then((res) => {
-    tableData.value = res;
+    tableData.value = res.map((o) => {
+      o.loading = false;
+      return o;
+    });
   });
 }
+
+const handleDelete = (row) => {
+  row.loading = true;
+  deleteCategoryGoods(row.id).then((res) => {
+    toast("删除关联商品成功");
+    getData();
+  });
+};
 
 defineExpose({
   open,

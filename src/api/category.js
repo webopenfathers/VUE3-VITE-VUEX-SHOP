@@ -34,3 +34,10 @@ export function deleteCategory(id) {
 export function getCategoryGoods(id) {
     return axios.get(`/admin/app_category_item/list?category_id=${id}`)
 }
+
+
+
+// 删除关联商品
+export function deleteCategoryGoods(id) {
+    return axios.post(`/admin/app_category_item/${id}/delete`)
+}
