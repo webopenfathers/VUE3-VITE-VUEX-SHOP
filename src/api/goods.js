@@ -28,10 +28,26 @@ export function updateGoods(id, data) {
 }
 
 
-// 删除管理员
+// 删除商品
 export function deleteGoods(ids) {
     ids = Array.isArray(ids) ? ids : [ids]
     return axios.post(`/admin/goods/delete_all`, { ids })
+}
+
+
+// 彻底恢复回收站商品
+export function restoreGoods(ids) {
+    ids = Array.isArray(ids) ? ids : [ids]
+    return axios.post('/admin/goods/restore', { ids })
+
+}
+
+
+// 彻底删除回收站商品
+export function destroyGoods(ids) {
+    ids = Array.isArray(ids) ? ids : [ids]
+    return axios.post('/admin/goods/destroy', { ids })
+
 }
 
 

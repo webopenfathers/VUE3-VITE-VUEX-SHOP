@@ -46,6 +46,26 @@
         @delete="handleMultiDelete"
       >
         <el-button
+          v-if="searchForm.tab == 'delete'"
+          type="warning"
+          size="small"
+          @click="handleRestoreGoods"
+          >恢复商品</el-button
+        >
+
+        <el-popconfirm
+          v-if="searchForm.tab == 'delete'"
+          title="是否要彻底删除该商品?"
+          confirm-button-text="确认"
+          cancel-button-text="取消"
+          @confirm="handleDestroyGoods()"
+        >
+          <template #reference>
+            <el-button type="danger" size="small">彻底删除</el-button>
+          </template>
+        </el-popconfirm>
+
+        <el-button
           size="small"
           @click="handleMultiStatusChange(1)"
           v-if="searchForm.tab === 'all' || searchForm.tab == 'off'"
@@ -306,6 +326,8 @@ import {
   createGoods,
   updateGoods,
   deleteGoods,
+  restoreGoods,
+  destroyGoods,
 } from "@/api/goods.js";
 import { getCategoryList } from "@/api/category";
 import FormDrawer from "@/components/FormDrawer.vue";
@@ -317,6 +339,7 @@ import banners from "./banners.vue";
 import content from "./content.vue";
 import skus from "./skus.vue";
 import { useInitTable, useInitForm } from "@/utils/useCommon.js";
+import { toast } from "../../utils/util";
 
 const {
   handleSelectionChange,
@@ -332,6 +355,7 @@ const {
   getData,
   handleDelete,
   handleMultiStatusChange,
+  multiSelectionIds,
 } = useInitTable({
   searchForm: {
     title: "",
@@ -437,4 +461,30 @@ const skusRef = ref(null);
 const handleSetGoodsSkus = (row) => {
   skusRef.value.open(row);
 };
+
+// 恢复商品
+const handleRestoreGoods = () => {
+  useMultiAction(restoreGoods, "恢复商品");
+};
+
+// 彻底删除商品
+const handleDestroyGoods = () => {
+  useMultiAction(destroyGoods, "彻底删除");
+};
+
+function useMultiAction(func, msg) {
+  loading.value = true;
+  func(multiSelectionIds.value)
+    .then((res) => {
+      toast(msg + "成功");
+      // 清空选中
+      if (multipleTableRef.value) {
+        multipleTableRef.value.clearSelection();
+      }
+      getData();
+    })
+    .finally(() => {
+      loading.value = false;
+    });
+}
 </script>
