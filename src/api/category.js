@@ -41,3 +41,9 @@ export function getCategoryGoods(id) {
 export function deleteCategoryGoods(id) {
     return axios.post(`/admin/app_category_item/${id}/delete`)
 }
+
+
+// 删除关联商品
+export function connectCategoryGoods(data) {
+    return axios.post(`/admin/app_category_item`, data)
+}

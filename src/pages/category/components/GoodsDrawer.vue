@@ -1,5 +1,10 @@
 <template>
-  <FormDrawer ref="formDrawerRef" :title="formDrawerTitle">
+  <FormDrawer
+    ref="formDrawerRef"
+    :title="formDrawerTitle"
+    @submit="handleConnect"
+    confirmText="关联"
+  >
     <el-table :data="tableData" border stripe style="width: 100%">
       <el-table-column prop="goods_id" align="center" label="ID" width="60" />
       <el-table-column align="center" label="商品封面" width="180">
@@ -41,12 +46,19 @@
       </el-table-column>
     </el-table>
   </FormDrawer>
+
+  <ChooseGoods ref="ChooseGoodsRef" />
 </template>
 <script setup>
 import { ref } from "vue";
 import FormDrawer from "@/components/FormDrawer.vue";
+import ChooseGoods from "@/components/ChooseGoods.vue";
 
-import { getCategoryGoods, deleteCategoryGoods } from "@/api/category.js";
+import {
+  getCategoryGoods,
+  deleteCategoryGoods,
+  connectCategoryGoods,
+} from "@/api/category.js";
 import { toast } from "@/utils/util";
 
 const formDrawerRef = ref(null);
@@ -80,6 +92,25 @@ const handleDelete = (row) => {
   deleteCategoryGoods(row.id).then((res) => {
     toast("删除关联商品成功");
     getData();
+  });
+};
+
+const ChooseGoodsRef = ref(null);
+
+const handleConnect = () => {
+  ChooseGoodsRef.value.open((goods_ids) => {
+    formDrawerRef.value.showLoading();
+    connectCategoryGoods({
+      category_id: category_id.value,
+      goods_ids,
+    })
+      .then((res) => {
+        getData();
+        toast("关联成功");
+      })
+      .finally(() => {
+        formDrawerRef.value.hideLoading();
+      });
   });
 };
 
