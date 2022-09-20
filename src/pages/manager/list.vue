@@ -188,7 +188,6 @@ const {
     username: "",
     password: "",
     role_id: null,
-    password: "",
     status: 1,
     avatar: "",
   },
