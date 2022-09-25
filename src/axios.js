@@ -36,7 +36,7 @@ service.interceptors.response.use(function (response) {
         })
     }
 
-    (msg.indexOf('禁止操作') !== -1) ? toast('默认数据，禁止操作', 'error') : toast(msg, 'error')
+    msg.includes('实战商城后台管理系统') ? toast('默认数据，禁止操作', 'error') : toast(msg, 'error')
 
     return Promise.reject(error);
 });
