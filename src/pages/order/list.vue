@@ -57,7 +57,13 @@
         </template>
       </Search>
       <!-- 新增|刷新 -->
-      <ListHeader layout="delete" @delete=""> </ListHeader>
+      <ListHeader
+        layout="delete,refresh,download"
+        @delete="handleMultiDelete"
+        @refresh="getData"
+        @download="handleExportExcel"
+      >
+      </ListHeader>
 
       <el-table
         :data="tableData"
@@ -119,10 +125,7 @@
                 size="small"
                 >微信支付</el-tag
               >
-              <el-tag
-                v-if="row.payment_method == 'alipay'"
-                type="primary"
-                size="small"
+              <el-tag v-if="row.payment_method == 'alipay'" size="small"
                 >支付宝支付</el-tag
               >
               <el-tag v-else type="info" size="small">未支付</el-tag>
@@ -193,16 +196,17 @@
         />
       </div>
     </el-card>
+
+    <ExportExcel :tabs="tabbars" ref="ExportExcelRef" />
   </div>
 </template>
 <script setup>
 import { ref } from "vue";
 import { getOrderList, deleteOrder } from "@/api/order.js";
-import FormDrawer from "@/components/FormDrawer.vue";
 import ListHeader from "@/components/ListHeader.vue";
-import ChooseImage from "@/components/ChooseImage.vue";
 import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
+import ExportExcel from "./ExportExcel.vue";
 import { useInitTable } from "@/utils/useCommon.js";
 
 const {
@@ -276,4 +280,10 @@ const tabbars = [
     name: "退款中",
   },
 ];
+
+const ExportExcelRef = ref(null);
+
+const handleExportExcel = () => {
+  ExportExcelRef.value.open();
+};
 </script>
