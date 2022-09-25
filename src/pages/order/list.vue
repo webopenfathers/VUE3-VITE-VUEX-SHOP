@@ -128,7 +128,9 @@
               <el-tag v-if="row.payment_method == 'alipay'" size="small"
                 >支付宝支付</el-tag
               >
-              <el-tag v-else type="info" size="small">未支付</el-tag>
+              <el-tag v-if="row.payment_method == null" type="info" size="small"
+                >未支付</el-tag
+              >
             </div>
             <div>
               发货状态：
@@ -154,7 +156,12 @@
         </el-table-column>
         <el-table-column label="操作" align="center">
           <template v-slot="{ row }">
-            <el-button class="px-1" type="primary" size="small" text
+            <el-button
+              class="px-1"
+              type="primary"
+              size="small"
+              text
+              @click="openInfoModal(row)"
               >订单详情</el-button
             >
             <el-button
@@ -198,6 +205,8 @@
     </el-card>
 
     <ExportExcel :tabs="tabbars" ref="ExportExcelRef" />
+
+    <InfoModal ref="InfoModalRef" :info="info" />
   </div>
 </template>
 <script setup>
@@ -207,6 +216,7 @@ import ListHeader from "@/components/ListHeader.vue";
 import Search from "@/components/Search.vue";
 import SearchItem from "@/components/SearchItem.vue";
 import ExportExcel from "./ExportExcel.vue";
+import InfoModal from "./InfoModal.vue";
 import { useInitTable } from "@/utils/useCommon.js";
 
 const {
@@ -285,5 +295,23 @@ const ExportExcelRef = ref(null);
 
 const handleExportExcel = () => {
   ExportExcelRef.value.open();
+};
+
+const InfoModalRef = ref(null);
+const info = ref(null);
+const openInfoModal = (row) => {
+  row.order_items = row.order_items.map((o) => {
+    if (o.skus_type == 1 && o.goods_skus) {
+      let s = [];
+      for (const key in o.goods_skus.skus) {
+        s.push(o.goods_skus.skus[key].value);
+      }
+      o.sku = s.join(",");
+    }
+
+    return o;
+  });
+  info.value = row;
+  InfoModalRef.value.open();
 };
 </script>
