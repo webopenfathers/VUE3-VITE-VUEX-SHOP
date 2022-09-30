@@ -4,7 +4,7 @@
     <el-col :lg="16" :md="12" class="left">
       <div>
         <div>欢迎光临</div>
-        <div>此站点是《vue3 + vite实战商城后台开发》视频课程的演示地址</div>
+        <div>VUE3 + Element-Plus + VUEX商城实战</div>
       </div>
     </el-col>
     <el-col :lg="8" :md="12" class="right">
