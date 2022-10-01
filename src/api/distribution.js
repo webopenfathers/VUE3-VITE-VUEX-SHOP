@@ -17,3 +17,16 @@ export function getAgentOrderList(page, query = {}) {
 export function getAgentStatistics() {
     return axios.get('/admin/agent/statistics')
 }
+
+
+
+export function getConfig() {
+    return axios.get(`/admin/distribution_setting/get`)
+
+}
+
+
+export function setConfig(data) {
+    return axios.post(`/admin/distribution_setting/set`, data)
+
+}
