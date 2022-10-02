@@ -16,7 +16,6 @@ export function setToken(token) {
 }
 
 // 清除token
-
-export function removeToken(token) {
-    return cookie.remove(TokenKey)
+export function removeToken(token = TokenKey) {
+    cookie.remove(token)
 }
