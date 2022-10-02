@@ -3,7 +3,7 @@ import { toast } from './utils/util';
 import store from './store'
 import { getToken } from "@/utils/auth.js";
 const service = axios.create({
-    baseURL: '/api'
+    baseURL: import.meta.env.VITE_APP_BASE_API
 })
 
 // 添加请求拦截器

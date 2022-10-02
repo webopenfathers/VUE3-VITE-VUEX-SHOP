@@ -19,4 +19,4 @@ export function deleteImage(ids) {
 }
 
 
-export const uploadImageAction = '/api/admin/image/upload'
+export const uploadImageAction = import.meta.env.VITE_APP_BASE_API + '/admin/image/upload'
