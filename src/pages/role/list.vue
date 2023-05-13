@@ -91,7 +91,6 @@
       <el-tree-v2
         node-key="id"
         ref="elTreeRef"
-        :check-strictly="checkStrictly"
         :default-expanded-keys="defaultExpandedKeys"
         :data="ruleList"
         :props="{ label: 'name', children: 'child' }"
@@ -102,7 +101,7 @@
         <template #default="{ node, data }">
           <div class="flex items-center">
             <el-tag :type="data.menu ? '' : 'info'" size="small">
-              {{ data.menu ? "菜单" : "权限" }}
+              {{ data.menu ? '菜单' : '权限' }}
             </el-tag>
             <span class="ml-2 text-sm">{{ data.name }}</span>
           </div>
@@ -119,13 +118,13 @@ import {
   deleteRole,
   updateRoleStatus,
   setRoleRules,
-} from "@/api/role";
-import { getRuleList } from "@/api/rule";
-import FormDrawer from "@/components/FormDrawer.vue";
-import ListHeader from "@/components/ListHeader.vue";
-import { useInitTable, useInitForm } from "@/utils/useCommon.js";
-import { ref } from "@vue/reactivity";
-import { toast } from "@/utils/util";
+} from '@/api/role';
+import { getRuleList } from '@/api/rule';
+import FormDrawer from '@/components/FormDrawer.vue';
+import ListHeader from '@/components/ListHeader.vue';
+import { useInitTable, useInitForm } from '@/utils/useCommon.js';
+import { ref } from '@vue/reactivity';
+import { toast } from '@/utils/util';
 
 const {
   tableData,
@@ -153,13 +152,13 @@ const {
   handleEdit,
 } = useInitForm({
   form: {
-    name: "",
-    desc: "",
+    name: '',
+    desc: '',
     status: 1,
   },
   rules: {
-    name: [{ required: true, message: "角色名称不能为空", trigger: "blur" }],
-    desc: [{ required: true, message: "角色描述不能为空", trigger: "blur" }],
+    name: [{ required: true, message: '角色名称不能为空', trigger: 'blur' }],
+    desc: [{ required: true, message: '角色描述不能为空', trigger: 'blur' }],
   },
   getData,
   update: updateRole,
@@ -175,26 +174,23 @@ const elTreeRef = ref(null);
 // 当前用户拥有的权限ID;
 const ruleIds = ref([]);
 
-const checkStrictly = ref(false);
-
 const openSetRule = (row) => {
   roleId.value = row.id;
   treeHeight.value = window.innerHeight - 180;
-  // 父子设置为不关联
-  checkStrictly.value = true;
 
   getRuleList(1).then((res) => {
     ruleList.value = res.list;
     defaultExpandedKeys.value = res.list.map((o) => o.id);
     setRuleFormDrawerRef.value.open();
 
-    // 必须在弹框打开以后，获取当前用户拥有的权限ID
-    ruleIds.value = row.rules.map((o) => o.id);
     setTimeout(() => {
-      elTreeRef.value.setCheckedKeys(ruleIds.value);
-
-      // 获取到数据以后设置为相互关联
-      checkStrictly.value = false;
+      // 设置选中node之前,重置node
+      elTreeRef.value.setCheckedKeys([]);
+      row.rules.forEach((item) => {
+        let node = elTreeRef.value.getNode(item.id);
+        // 过滤父节点---回显半选
+        if (node.isLeaf) elTreeRef.value.setChecked(node.key, true);
+      });
     });
   });
 };
@@ -203,7 +199,7 @@ const handleSetRuleSubmit = () => {
   setRuleFormDrawerRef.value.showLoading();
   setRoleRules(roleId.value, ruleIds.value)
     .then((res) => {
-      toast("配置成功");
+      toast('配置成功');
       getData();
       setRuleFormDrawerRef.value.close();
     })
